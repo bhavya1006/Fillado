@@ -6,7 +6,8 @@
 
 # HLD
 
-(Insert architecture diagram here)
+<img width="680" height="1820" alt="llm_trading_architecture 1" src="https://github.com/user-attachments/assets/e21cdd09-c139-45a6-8b31-e90bde6df99e" />
+
 
 ---
 
