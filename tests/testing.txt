@@ -1,0 +1,458 @@
+╔══════════════════════════════════════════════════════════════════════╗
+║   FILLADO — HYBRID EXECUTION ENGINE — E2E PIPELINE TEST v2      ║
+╚══════════════════════════════════════════════════════════════════════╝
+  Started : 2026-03-29T21:53:58.240121
+  Backend : http://localhost:8000
+  Log File: C:\Users\bhavy\Desktop\Kaam\Hackathon\ET-Genai\Fillado\testing.txt
+  Modes   : mock=True, live=True, units=True
+
+────────────────────────────────────────────────────────────────────────
+  BACKEND HEALTH CHECK
+────────────────────────────────────────────────────────────────────────
+  ✅ Backend reachable: {'status': 'ok', 'service': 'fillado-backend'}
+  ℹ  GROQ_API_KEY      : ✅
+  ℹ  NEWSDATA_API_KEY  : ✅  (Tier 1 news)
+  ℹ  NEO4J_URI         : ✅
+
+════════════════════════════════════════════════════════════════════════
+  UNIT TESTS — Tool Functions (Direct Import)
+════════════════════════════════════════════════════════════════════════
+
+────────────────────────────────────────────────────────────────────────
+  UNIT 1: fetch_et_news — Triple-Tier Fallback
+────────────────────────────────────────────────────────────────────────
+  ℹ  Calling fetch_et_news('Ashok Leyland strike')
+  ✅ Result: tier=2, mode=live_compound, articles=0
+  ℹ  Summary: The employee strike over bonus demands led to a temporary shutdown of the Pantnagar plant and raised concerns about production, causing Ashok Leyland’s shares to tumble sharply (down roughly 1.5%‑16% ...
+  ✅ Active tier: Tier 2 — groq/compound
+
+────────────────────────────────────────────────────────────────────────
+  UNIT 2: get_nse_price — Live yfinance (.NS auto-suffix)
+────────────────────────────────────────────────────────────────────────
+  ℹ  Fetching ADANIPORTS...
+  ✅ ADANIPORTS (ADANIPORTS.NS) → ₹1337.8 (-2.77% if isinstance(-2.77, float) else chg_pct) — 19 candles [live]
+  ℹ  Fetching RELIANCE...
+  ✅ RELIANCE (RELIANCE.NS) → ₹1348.1 (-4.60% if isinstance(-4.6, float) else chg_pct) — 19 candles [live]
+  ℹ  Fetching NONEXISTENTTICKER123...
+  ⚠️  [fallback] NONEXISTENTTICKER123 (NONEXISTENTTICKER123) → ₹483.54 (-1.64% if isinstance(-1.64, float) else chg_pct) — 20 candles [mock_fallback]
+
+────────────────────────────────────────────────────────────────────────
+  UNIT 3: execute_graphrag_query — Neo4j sub-graph
+────────────────────────────────────────────────────────────────────────
+  ✅ Tickers: ['ADANIPORTS', 'GUJGASLTD', 'CONCOR', 'MAHLOG'], Causal chain links: 5
+
+────────────────────────────────────────────────────────────────────────
+  UNIT 4: append_causal_link — Neo4j write
+────────────────────────────────────────────────────────────────────────
+  ✅ Neo4j write — mode=?: {'tool': 'append_causal_link', 'success': False, 'error': 'Unable to retrieve routing information'}
+
+════════════════════════════════════════════════════════════════════════
+  DEBATE TEST: MOCK PATH — 'Transport Strike in Gujarat'
+════════════════════════════════════════════════════════════════════════
+  ℹ  Event   : Transport Strike in Gujarat
+  ℹ  Time    : 2026-03-29T21:54:16.128337
+  ℹ  WS      : ws://localhost:8000/ws/trading-floor
+  ℹ  Timeout : 120s
+  ✅ [21:54:18.165] WebSocket connected
+  ✅ [21:54:19.512] API triggered — status: debate_started, mode: UNKNOWN
+  ℹ  Graph context: tickers=['ADANIPORTS', 'GUJGASLTD', 'CONCOR', 'MAHLOG'], confidence=0.82, strength=HIGH
+
+────────────────────────────────────────────────────────────────────────
+  LIVE STREAM (tokens, tools, events)
+────────────────────────────────────────────────────────────────────────
+
+[21:54:19.515] 🚀 DEBATE STARTED — ◎ MOCK
+
+
+▶▶▶  RETAIL  ◀◀◀
+
+
+[21:54:20.637] 🚨 THOUGHT POLICEMAN intercepted [retail]
+
+[21:54:20.638] 🔌 MCP: fetch_et_news_mock()
+           Summary: Found 2 ET articles about 'Transport Strike in Gujarat' in the last 7d.
+
+[21:54:20.666] 💬 AGENT RESPONSE [retail]: The transport strike in Gujarat is a massive opportunity for traders like me. I'm keeping a close eye on ADANIPORTS, as ...
+
+
+▶▶▶  WHALE  ◀◀◀
+
+
+[21:54:22.136] 💬 AGENT RESPONSE [whale]: The transport strike in Gujarat will significantly impact the logistics sector, with ADANIPORTS likely to experience a 1...
+
+
+▶▶▶  CONTRARIAN  ◀◀◀
+
+
+[21:54:23.680] 💬 AGENT RESPONSE [contrarian]: I disagree with the prevailing view that the transport strike in Gujarat will lead to a significant decline in logistics...
+
+
+▶▶▶  RETAIL  ◀◀◀
+
+
+[21:54:24.838] 🚨 THOUGHT POLICEMAN intercepted [retail]
+
+[21:54:24.838] 🔌 MCP: fetch_et_news_mock()
+           Summary: Found 2 ET articles about 'Transport Strike in Gujarat' in the last 7d.
+
+[21:54:24.968] 💬 AGENT RESPONSE [retail]: I'm buzzing with excitement as the transport strike in Gujarat creates a perfect storm for traders like me. I'm closely ...
+
+
+▶▶▶  WHALE  ◀◀◀
+
+
+[21:54:26.381] 💬 AGENT RESPONSE [whale]: As per our supply-chain data, the transport strike in Gujarat is expected to cause a 12% decline in cargo handling volum...
+
+
+▶▶▶  CONTRARIAN  ◀◀◀
+
+
+[21:54:27.831] 💬 AGENT RESPONSE [contrarian]: I disagree with the prevailing view that the transport strike in Gujarat will lead to a significant decline in logistics...
+
+
+▶▶▶  RETAIL  ◀◀◀
+
+
+[21:54:29.061] 🚨 THOUGHT POLICEMAN intercepted [retail]
+
+[21:54:29.062] 🔌 MCP: fetch_et_news_mock()
+           Summary: Found 2 ET articles about 'Transport Strike in Gujarat' in the last 7d.
+
+[21:54:29.079] 💬 AGENT RESPONSE [retail]: I'm excited about the transport strike in Gujarat, as it creates a perfect trading opportunity. I'm closely watching ADA...
+
+
+▶▶▶  WHALE  ◀◀◀
+
+
+[21:54:30.389] 💬 AGENT RESPONSE [whale]: Our sector rotation model indicates that the transport strike in Gujarat will have a significant impact on the logistics...
+
+
+▶▶▶  CONTRARIAN  ◀◀◀
+
+
+[21:54:31.727] 💬 AGENT RESPONSE [contrarian]: I disagree with the prevailing view that the transport strike in Gujarat will lead to a significant decline in logistics...
+
+
+▶▶▶  SYNTHESIS  ◀◀◀
+
+
+[21:54:34.275] 💬 AGENT RESPONSE [synthesis]: {
+  "CONSENSUS": "BEARISH",
+  "CONFIDENCE_PCT": 82,
+  "PRIMARY_TICKER": "ADANIPORTS",
+  "SECONDARY_TICKERS": ["GUJGASLTD...
+
+[21:54:34.277] 🔌 MCP: get_nse_price()
+
+[21:54:35.755] 📈 STOCK CHART broadcast: ADANIPORTS ₹1337.8 (-2.77%) [LIVE] 19 candles
+
+[21:54:35.756] 🔌 MCP: get_nse_price()
+
+[21:54:36.316] 📈 STOCK CHART broadcast: GUJGASLTD ₹317.65 (-4.09%) [LIVE] 19 candles
+
+[21:54:36.317] 🔌 MCP: get_nse_price()
+
+[21:54:36.757] 📈 STOCK CHART broadcast: CONCOR ₹438.2 (-1.56%) [LIVE] 19 candles
+
+[21:54:36.758] 🔌 MCP: append_causal_link()
+
+[21:54:36.941] 🔗 NEO4J WRITE: {'tool': 'append_causal_link', 'success': False, 'error': 'Unable to retrieve routing information'}
+
+
+[21:54:36.942] ✅ SYNTHESIS COMPLETE:
+    CONSENSUS: BEARISH
+    CONFIDENCE_PCT: 82
+    PRIMARY_TICKER: ADANIPORTS
+    SECONDARY_TICKERS: ['GUJGASLTD', 'CONCOR', 'MAHLOG']
+    TIME_HORIZON: swing
+    CAUSAL_CHAIN: Transport Strike ➜ DISRUPTS ➜ Gujarat Logistics
+    RATIONALE: Supply‑chain data predicts a 10‑12% drop in ADANIPORTS cargo volumes and similar pressure on GUJGASLTD and CONCOR, suggesting near‑term downside. Historical resilience may create buying opportunities on the dip, but the immediate bias remains bearish.
+
+[21:54:36.946] 🏁 DEBATE ENDED
+
+────────────────────────────────────────────────────────────────────────
+  SUMMARY — MOCK PATH — 'Transport Strike in Gujarat'
+────────────────────────────────────────────────────────────────────────
+  ℹ  Mode       : MOCK
+  ℹ  Completed  : ✅ Yes
+  ℹ  Errors     : 0 (none)
+  ℹ  Intercepts : 3 (['retail', 'retail', 'retail'])
+  ℹ  MCP Calls  : 7
+  🔌 21:54:20.638 fetch_et_news_mock() articles=2
+  🔌 21:54:24.838 fetch_et_news_mock() articles=2
+  🔌 21:54:29.062 fetch_et_news_mock() articles=2
+  🔌 21:54:34.277 get_nse_price()
+  🔌 21:54:35.756 get_nse_price()
+  🔌 21:54:36.317 get_nse_price()
+  🔌 21:54:36.758 append_causal_link()
+  ℹ  Neo4j writes: 1
+  ℹ  Stock Charts : 3
+  📈 ADANIPORTS: ₹1337.8 (-2.77%) [LIVE] 19 candles
+  📈 GUJGASLTD: ₹317.65 (-4.09%) [LIVE] 19 candles
+  📈 CONCOR: ₹438.2 (-1.56%) [LIVE] 19 candles
+
+  ℹ  Final Trading Signal:
+    CONSENSUS: BEARISH
+    CONFIDENCE_PCT: 82
+    PRIMARY_TICKER: ADANIPORTS
+    SECONDARY_TICKERS: ['GUJGASLTD', 'CONCOR', 'MAHLOG']
+    TIME_HORIZON: swing
+    CAUSAL_CHAIN: Transport Strike ➜ DISRUPTS ➜ Gujarat Logistics
+    RATIONALE: Supply‑chain data predicts a 10‑12% drop in ADANIPORTS cargo volumes and similar pressure on GUJGASLTD and CONCOR, suggesting near‑term downside. Historical resilience may create buying opportunities on the dip, but the immediate bias remains bearish.
+
+  ℹ  Agent Transcripts (previews):
+    [RETAIL] (582 chars) → I'm excited about the transport strike in Gujarat, as it creates a perfect trading opportunity. I'm closely watching ADANIPORTS, and a potential dip in its price could be a great buying chance, given its historical resilience. I'm also tracking deliv...
+    [WHALE] (709 chars) → Our sector rotation model indicates that the transport strike in Gujarat will have a significant impact on the logistics sector, with ADANIPORTS likely to experience a 12% decline in cargo handling volumes. According to our supply-chain data, GUJGASL...
+    [CONTRARIAN] (741 chars) → I disagree with the prevailing view that the transport strike in Gujarat will lead to a significant decline in logistics stocks. Historical data shows that ADANIPORTS has rebounded by 18% on average within 3 months of similar disruptions, while GUJGA...
+    [SYNTHESIS] (510 chars) → {   "CONSENSUS": "BEARISH",   "CONFIDENCE_PCT": 82,   "PRIMARY_TICKER": "ADANIPORTS",   "SECONDARY_TICKERS": ["GUJGASLTD", "CONCOR", "MAHLOG"],   "TIME_HORIZON": "swing",   "CAUSAL_CHAIN": "Transport Strike ➜ DISRUPTS ➜ Gujarat Logistics",   "RATIONA...
+
+  Waiting 5s before live test...
+
+
+════════════════════════════════════════════════════════════════════════
+  DEBATE TEST: LIVE PATH — openai/gpt-oss-120b + tool-calling + yfinance
+════════════════════════════════════════════════════════════════════════
+  ℹ  Event   : SEBI F&O margin rules retail traders
+  ℹ  Time    : 2026-03-29T21:54:41.974264
+  ℹ  WS      : ws://localhost:8000/ws/trading-floor
+  ℹ  Timeout : 300s
+  ✅ [21:54:44.029] WebSocket connected
+  ✅ [21:54:45.252] API triggered — status: debate_started, mode: UNKNOWN
+  ℹ  Graph context: tickers=['ADANIPORTS', 'GUJGASLTD', 'CONCOR', 'MAHLOG'], confidence=0.82, strength=HIGH
+
+────────────────────────────────────────────────────────────────────────
+  LIVE STREAM (tokens, tools, events)
+────────────────────────────────────────────────────────────────────────
+
+[21:54:45.255] 🚀 DEBATE STARTED — ⚡ LIVE
+
+
+▶▶▶  RETAIL  ◀◀◀
+
+ *[Researching with live tools...]* 
+[21:54:58.945] 🔌 MCP: fetch_et_news() [tier=2]
+           Summary: SEBI's new F&O margin rules raise upfront margin requirements, increase lot sizes and tighten position limits, which for
+
+[21:55:03.585] 💬 AGENT RESPONSE [retail]: SEBI’s tighter F&O margins are squeezing retail leverage, but the transport strike in Gujarat is spiking delivery volume...
+
+
+▶▶▶  WHALE  ◀◀◀
+
+ *[Researching with live tools...]* 
+[21:55:34.103] 🔌 MCP: fetch_et_news() [tier=2]
+           Summary: **Market‑impact summary (2 sentences)**  
+SEBI's tightened F&O margin rules—higher upfront margins, larger index‑option 
+
+[21:55:35.448] 💬 AGENT RESPONSE [whale]: The SEBI F&O margin hike is projected to cut retail leverage by roughly 15‑20 % in the next two weeks, throttling order‑...
+
+
+▶▶▶  CONTRARIAN  ◀◀◀
+
+ *[Researching with live tools...]* 
+[21:56:12.250] 🔌 MCP: fetch_et_news() [tier=3]
+           Summary: Found 2 ET articles about 'Gujarat transport strike ADANIPORTS' in the last 7d.
+
+[21:56:12.894] 🚨 THOUGHT POLICEMAN intercepted [contrarian]
+
+[21:56:12.992] 💬 AGENT RESPONSE [contrarian]: The rally in ADANIPORTS is a classic hype‑driven bounce; the transport strike has already forced shippers onto alternate...
+
+
+▶▶▶  RETAIL  ◀◀◀
+
+ *[Researching with live tools...]* 
+[21:56:14.384] 🔌 MCP: get_nse_price()
+           Price: ₹1337.8 (-2.77%)
+
+[21:56:18.157] 🚨 THOUGHT POLICEMAN intercepted [retail]
+
+[21:56:18.178] 💬 AGENT RESPONSE [retail]: The Gujarat strike has jam‑packed cargo at Mundra, pushing ADANIPORTS.NS into a delivery‑volume surge and sparking a bul...
+
+
+▶▶▶  WHALE  ◀◀◀
+
+ *[Researching with live tools...]* 
+[21:56:33.044] 🔌 MCP: get_nse_price()
+           Price: ₹1337.8 (-2.77%)
+
+[21:56:50.083] 🚨 THOUGHT POLICEMAN intercepted [whale]
+
+[21:56:50.288] 💬 AGENT RESPONSE [whale]: The transport strike in Gujarat has left the logistics/port sector under pressure, with ADANIPORTS.NS now trading at ₹1,...
+
+
+▶▶▶  CONTRARIAN  ◀◀◀
+
+ *[Researching with live tools...]* 
+[21:57:05.065] 🔌 MCP: get_nse_price()
+           Price: ₹1337.8 (-2.77%)
+
+[21:57:22.287] 💬 AGENT RESPONSE [contrarian]: The recent dip in ADANIPORTS isn’t a bargain‑hunt but the tail‑end of a steep correction—from a March‑high of ₹1,545 to ...
+
+
+▶▶▶  RETAIL  ◀◀◀
+
+ *[Researching with live tools...]* 
+[21:57:26.806] 🚀 DEBATE STARTED — ◎ MOCK
+
+
+▶▶▶  RETAIL  ◀◀◀
+
+
+[21:57:28.689] 🚨 THOUGHT POLICEMAN intercepted [retail]
+
+[21:57:28.690] 🔌 MCP: fetch_et_news_mock()
+           Summary: Found 2 ET articles about 'Transport Strike in Gujarat – Truck operators call indefinite bandh, Mundra port cargo moveme
+
+[21:57:28.706] 💬 AGENT RESPONSE [retail]: The transport strike in Gujarat is a massive opportunity for me to cash in on the momentum. I'm keeping a close eye on A...
+
+
+▶▶▶  WHALE  ◀◀◀
+
+
+[21:57:30.802] 💬 AGENT RESPONSE [whale]: The transport strike in Gujarat will significantly impact the logistics sector, with a potential 15% decline in cargo mo...
+
+
+▶▶▶  CONTRARIAN  ◀◀◀
+
+
+[21:57:32.901] 💬 AGENT RESPONSE [contrarian]: I disagree with the bearish sentiment, as the transport strike in Gujarat may actually benefit ADANIPORTS and CONCOR in ...
+
+
+▶▶▶  RETAIL  ◀◀◀
+
+
+[21:57:34.595] 🚨 THOUGHT POLICEMAN intercepted [retail]
+
+[21:57:34.596] 🔌 MCP: fetch_et_news_mock()
+           Summary: Found 2 ET articles about 'Transport Strike in Gujarat – Truck operators call indefinite bandh, Mundra port cargo moveme
+
+[21:57:34.647] 💬 AGENT RESPONSE [retail]: I'm bullish on the opportunity presented by the transport strike in Gujarat, and I'm closely watching ADANIPORTS as the ...
+
+
+▶▶▶  WHALE  ◀◀◀
+
+
+[21:57:36.675] 💬 AGENT RESPONSE [whale]: The transport strike in Gujarat will have a significant impact on the logistics sector, with a predicted 12% decline in ...
+
+
+▶▶▶  CONTRARIAN  ◀◀◀
+
+
+[21:57:37.997] 🔌 MCP: get_nse_price()
+           Price: ₹1337.8 (-2.77%)
+
+[21:57:39.409] 💬 AGENT RESPONSE [contrarian]: I disagree with the prevailing bearish sentiment, as the transport strike in Gujarat may actually create a buying opport...
+
+
+▶▶▶  RETAIL  ◀◀◀
+
+
+[21:57:41.374] 🚨 THOUGHT POLICEMAN intercepted [retail]
+
+[21:57:41.375] 🔌 MCP: fetch_et_news_mock()
+           Summary: Found 2 ET articles about 'Transport Strike in Gujarat – Truck operators call indefinite bandh, Mundra port cargo moveme
+
+[21:57:41.377] 💬 AGENT RESPONSE [retail]: I'm loving the momentum play here, with the transport strike in Gujarat causing chaos in the logistics sector. I'm keepi...
+
+
+▶▶▶  WHALE  ◀◀◀
+
+
+[21:57:43.394] 🚨 THOUGHT POLICEMAN intercepted [whale]
+
+[21:57:43.396] 🔌 MCP: fetch_et_news_mock()
+           Summary: Found 2 ET articles about 'Transport Strike in Gujarat – Truck operators call indefinite bandh, Mundra port cargo moveme
+
+[21:57:43.400] 💬 AGENT RESPONSE [whale]: The transport strike in Gujarat is expected to significantly impact the logistics sector, with a predicted 12% decline i...
+
+
+▶▶▶  CONTRARIAN  ◀◀◀
+
+
+[21:57:45.517] 💬 AGENT RESPONSE [contrarian]: I disagree with the prevailing bearish sentiment, as the transport strike in Gujarat may actually create a buying opport...
+
+
+▶▶▶  SYNTHESIS  ◀◀◀
+
+
+[21:57:48.550] 💬 AGENT RESPONSE [synthesis]: {
+  "CONSENSUS": "BEARISH",
+  "CONFIDENCE_PCT": 80,
+  "PRIMARY_TICKER": "ADANIPORTS",
+  "SECONDARY_TICKERS": ["CONCOR", ...
+
+[21:57:48.552] 🔌 MCP: get_nse_price()
+
+[21:57:48.908] 📈 STOCK CHART broadcast: ADANIPORTS ₹1337.8 (-2.77%) [LIVE] 19 candles
+
+[21:57:48.918] 🔌 MCP: get_nse_price()
+
+[21:57:49.292] 📈 STOCK CHART broadcast: CONCOR ₹438.2 (-1.56%) [LIVE] 19 candles
+
+[21:57:49.293] 🔌 MCP: get_nse_price()
+
+[21:57:49.631] 📈 STOCK CHART broadcast: GUJGASLTD ₹317.65 (-4.09%) [LIVE] 19 candles
+
+[21:57:49.631] 🔌 MCP: append_causal_link()
+
+[21:57:49.847] 🔗 NEO4J WRITE: {'tool': 'append_causal_link', 'success': False, 'error': 'Unable to retrieve routing information'}
+
+
+[21:57:49.848] ✅ SYNTHESIS COMPLETE:
+    CONSENSUS: BEARISH
+    CONFIDENCE_PCT: 80
+    PRIMARY_TICKER: ADANIPORTS
+    SECONDARY_TICKERS: ['CONCOR', 'GUJGASLTD', 'MAHLOG']
+    TIME_HORIZON: swing
+    CAUSAL_CHAIN: Transport Strike ➜ DISRUPTS ➜ Gujarat Logistics
+    RATIONALE: The indefinite transport strike in Gujarat has halted cargo movement at Mundra port, directly depressing ADANIPORTS volumes and creating supply‑chain risk for related logistics firms. With high signal strength and ~82% confidence, short positions on ADANIPORTS and its peers are favored over a swing‑type horizon.
+
+[21:57:49.856] 🏁 DEBATE ENDED
+
+────────────────────────────────────────────────────────────────────────
+  SUMMARY — LIVE PATH — openai/gpt-oss-120b + tool-calling + yfinance
+────────────────────────────────────────────────────────────────────────
+  ℹ  Mode       : MOCK
+  ℹ  Completed  : ✅ Yes
+  ℹ  Errors     : 0 (none)
+  ℹ  Intercepts : 7 (['contrarian', 'retail', 'whale', 'retail', 'retail', 'retail', 'whale'])
+  ℹ  MCP Calls  : 15
+  🔌 21:54:58.945 fetch_et_news() [tier=2] [live_compound] articles=0
+  🔌 21:55:34.103 fetch_et_news() [tier=2] [live_compound] articles=0
+  🔌 21:56:12.250 fetch_et_news() [tier=3] [mock_fallback] articles=2
+  🔌 21:56:14.384 get_nse_price() [live] ₹1337.8
+  🔌 21:56:33.044 get_nse_price() [live] ₹1337.8
+  🔌 21:57:05.065 get_nse_price() [live] ₹1337.8
+  🔌 21:57:28.690 fetch_et_news_mock() articles=2
+  🔌 21:57:34.596 fetch_et_news_mock() articles=2
+  🔌 21:57:37.997 get_nse_price() [live] ₹1337.8
+  🔌 21:57:41.375 fetch_et_news_mock() articles=2
+  🔌 21:57:43.396 fetch_et_news_mock() articles=2
+  🔌 21:57:48.552 get_nse_price()
+  🔌 21:57:48.918 get_nse_price()
+  🔌 21:57:49.293 get_nse_price()
+  🔌 21:57:49.631 append_causal_link()
+  ℹ  Neo4j writes: 1
+  ℹ  Stock Charts : 3
+  📈 ADANIPORTS: ₹1337.8 (-2.77%) [LIVE] 19 candles
+  📈 CONCOR: ₹438.2 (-1.56%) [LIVE] 19 candles
+  📈 GUJGASLTD: ₹317.65 (-4.09%) [LIVE] 19 candles
+
+  ℹ  Final Trading Signal:
+    CONSENSUS: BEARISH
+    CONFIDENCE_PCT: 80
+    PRIMARY_TICKER: ADANIPORTS
+    SECONDARY_TICKERS: ['CONCOR', 'GUJGASLTD', 'MAHLOG']
+    TIME_HORIZON: swing
+    CAUSAL_CHAIN: Transport Strike ➜ DISRUPTS ➜ Gujarat Logistics
+    RATIONALE: The indefinite transport strike in Gujarat has halted cargo movement at Mundra port, directly depressing ADANIPORTS volumes and creating supply‑chain risk for related logistics firms. With high signal strength and ~82% confidence, short positions on ADANIPORTS and its peers are favored over a swing‑type horizon.
+
+  ℹ  Agent Transcripts (previews):
+    [RETAIL] (562 chars) → I'm loving the momentum play here, with the transport strike in Gujarat causing chaos in the logistics sector. I'm keeping a close eye on ADANIPORTS, as the cargo movement halt at Mundra port will surely impact its stock price, and CONCOR's delivery ...
+    [WHALE] (898 chars) → The transport strike in Gujarat is expected to significantly impact the logistics sector, with a predicted 12% decline in cargo movement at Mundra port, affecting ADANIPORTS' stock price, as indicated by the graph's 0.85 beta coefficient. According t...
+    [CONTRARIAN] (777 chars) → I disagree with the prevailing bearish sentiment, as the transport strike in Gujarat may actually create a buying opportunity for ADANIPORTS and CONCOR, with a potential 10% increase in stock price due to increased demand for their services once the ...
+    [SYNTHESIS] (572 chars) → {   "CONSENSUS": "BEARISH",   "CONFIDENCE_PCT": 80,   "PRIMARY_TICKER": "ADANIPORTS",   "SECONDARY_TICKERS": ["CONCOR", "GUJGASLTD", "MAHLOG"],   "TIME_HORIZON": "swing",   "CAUSAL_CHAIN": "Transport Strike ➜ DISRUPTS ➜ Gujarat Logistics",   "RATIONA...
+
+════════════════════════════════════════════════════════════════════════
+  ALL TESTS COMPLETE
+  Log saved: C:\Users\bhavy\Desktop\Kaam\Hackathon\ET-Genai\Fillado\testing.txt
+════════════════════════════════════════════════════════════════════════
