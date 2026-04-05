@@ -2,9 +2,9 @@ import { motion } from 'framer-motion'
 
 const DIRECTION_MAP = { BULLISH: 1, BEARISH: -1, NEUTRAL: 0 }
 const DIRECTION_COLOR = {
-  BULLISH: '#10b981',
-  BEARISH: '#f43f5e',
-  NEUTRAL: '#f59e0b',
+  BULLISH: 'var(--accent-jade)',
+  BEARISH: 'var(--accent-crimson)',
+  NEUTRAL: 'var(--accent-gold)',
 }
 
 /**
@@ -20,47 +20,76 @@ export default function TradingSignal({ signal = {}, causalChain = [] }) {
   const timeHorizon  = signal.TIME_HORIZON || signal.time_horizon || '—'
   const confidence   = signal.confidence || '—'
   const rationale    = signal.RATIONALE || signal.rationale || signal.raw || '—'
-  const color = DIRECTION_COLOR[consensus] || '#f59e0b'
+  const color = DIRECTION_COLOR[consensus] || 'var(--accent-gold)'
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: 'spring', stiffness: 200, damping: 22 }}
+      className="corner-marks"
       style={{
-        background: `linear-gradient(135deg, ${color}0d, rgba(13,17,23,0.95))`,
-        border: `1.5px solid ${color}50`,
-        borderRadius: 18,
-        padding: 24,
+        background: 'rgba(0,0,0,0.2)',
+        border: '1px solid var(--border)',
+        borderRadius: 2,
+        padding: 26,
         marginTop: 24,
+        position: 'relative',
       }}
     >
+      {/* Top decorative line */}
+      <div style={{
+        position: 'absolute', top: 0, left: 24, right: 24, height: 1,
+        background: `linear-gradient(to right, transparent, ${color}, transparent)`,
+        opacity: 0.4,
+      }} />
+
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 20 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 22 }}>
         <div>
-          <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.08em', marginBottom: 4 }}>
-            🎯 SYNTHESIS AGENT — FINAL TRADING SIGNAL
+          <div style={{
+            fontSize: '0.6rem', color: 'var(--text-muted)', fontWeight: 700,
+            letterSpacing: '0.12em', marginBottom: 6,
+            fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
+          }}>
+            Synthesis Agent — Final Signal
           </div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, color }}>
+          <div style={{
+            fontFamily: 'var(--font-display)', fontSize: '1.8rem',
+            fontWeight: 400, fontStyle: 'italic', color,
+          }}>
             {consensus}
           </div>
         </div>
         <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
-          <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Confidence</div>
-          <div style={{ fontSize: '1.2rem', fontWeight: 700, color }}>{confidence}</div>
+          <div style={{
+            fontSize: '0.6rem', color: 'var(--text-muted)',
+            fontFamily: 'var(--font-mono)', letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+          }}>Confidence</div>
+          <div style={{
+            fontFamily: 'var(--font-display)', fontSize: '1.3rem',
+            fontWeight: 400, fontStyle: 'italic', color,
+          }}>{confidence}</div>
         </div>
       </div>
 
       {/* Tickers row */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 18 }}>
         <div style={{
           display: 'flex', alignItems: 'center', gap: 6,
-          background: `${color}18`,
-          border: `1.5px solid ${color}50`,
-          borderRadius: 8, padding: '6px 14px',
+          background: 'rgba(212,175,55,0.06)',
+          border: '1px solid rgba(212,175,55,0.2)',
+          borderRadius: 2, padding: '6px 14px',
         }}>
-          <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>PRIMARY</span>
-          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: '0.92rem', color }}>
+          <span style={{
+            fontSize: '0.6rem', color: 'var(--text-muted)',
+            fontFamily: 'var(--font-mono)', letterSpacing: '0.08em',
+          }}>PRIMARY</span>
+          <span style={{
+            fontFamily: 'var(--font-mono)', fontWeight: 700,
+            fontSize: '0.88rem', color: 'var(--accent-gold)',
+          }}>
             {primaryTicker}
           </span>
         </div>
@@ -70,38 +99,44 @@ export default function TradingSignal({ signal = {}, causalChain = [] }) {
       </div>
 
       {/* Metadata */}
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 18 }}>
         <div style={{
-          background: 'rgba(255,255,255,0.04)',
-          border: '1px solid rgba(255,255,255,0.08)',
-          borderRadius: 8, padding: '6px 14px',
-          fontSize: '0.78rem', color: 'var(--text-secondary)',
+          background: 'rgba(255,255,255,0.02)',
+          border: '1px solid var(--border-subtle)',
+          borderRadius: 2, padding: '6px 14px',
+          fontSize: '0.74rem', color: 'var(--text-secondary)',
+          fontFamily: 'var(--font-mono)',
         }}>
           ⏱ {timeHorizon}
         </div>
         <div style={{
-          background: 'rgba(255,255,255,0.04)',
-          border: '1px solid rgba(255,255,255,0.08)',
-          borderRadius: 8, padding: '6px 14px',
-          fontSize: '0.78rem', color: 'var(--text-secondary)',
+          background: 'rgba(255,255,255,0.02)',
+          border: '1px solid var(--border-subtle)',
+          borderRadius: 2, padding: '6px 14px',
+          fontSize: '0.74rem', color: 'var(--text-secondary)',
+          fontFamily: 'var(--font-mono)',
         }}>
-          🤖 LangGraph — 3 agents · 3 turns
+          LangGraph — 3 agents · 3 turns
         </div>
       </div>
 
       {/* Rationale */}
       {rationale && rationale !== '—' && (
         <div style={{
-          background: 'rgba(255,255,255,0.03)',
-          border: '1px solid rgba(255,255,255,0.06)',
-          borderRadius: 10, padding: '12px 16px',
-          fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.65,
+          background: 'rgba(255,255,255,0.02)',
+          border: '1px solid var(--border-subtle)',
+          borderRadius: 2, padding: '14px 18px',
+          fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.7,
         }}>
-          <span style={{ color: 'var(--text-muted)', fontWeight: 600, fontSize: '0.7rem', letterSpacing: '0.06em' }}>
-            RATIONALE  
+          <span style={{
+            color: 'var(--text-muted)', fontWeight: 700, fontSize: '0.6rem',
+            letterSpacing: '0.1em', fontFamily: 'var(--font-mono)',
+            textTransform: 'uppercase',
+          }}>
+            Rationale  
           </span>
           <br />
-          {rationale}
+          <span style={{ fontFamily: 'var(--font-body)' }}>{rationale}</span>
         </div>
       )}
 
@@ -112,19 +147,24 @@ export default function TradingSignal({ signal = {}, causalChain = [] }) {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.4 }}
           style={{
-            marginTop: 14,
-            background: 'rgba(16,185,129,0.08)',
-            border: '1px solid rgba(16,185,129,0.3)',
-            borderRadius: 8, padding: '8px 14px',
+            marginTop: 16,
+            background: 'rgba(61,214,140,0.05)',
+            border: '1px solid rgba(61,214,140,0.2)',
+            borderRadius: 2, padding: '10px 14px',
             display: 'flex', alignItems: 'center', gap: 10,
-            fontSize: '0.75rem', color: '#10b981',
+            fontSize: '0.74rem', color: 'var(--accent-jade)',
           }}
         >
-          <span>🧠</span>
+          <span style={{ fontSize: '0.6rem', opacity: 0.7 }}>◈</span>
           <div>
-            <strong>Fillado has learned {causalChain.length} new market connection{causalChain.length > 1 ? 's' : ''}!</strong>
+            <strong style={{ fontFamily: 'var(--font-body)' }}>
+              Fillado has learned {causalChain.length} new market connection{causalChain.length > 1 ? 's' : ''}!
+            </strong>
             <br />
-            <span style={{ color: 'rgba(16,185,129,0.7)', fontSize: '0.68rem' }}>
+            <span style={{
+              color: 'rgba(61,214,140,0.6)', fontSize: '0.65rem',
+              fontFamily: 'var(--font-mono)',
+            }}>
               Written to Neo4j AuraDB via append_causal_link()
             </span>
           </div>

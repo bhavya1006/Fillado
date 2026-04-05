@@ -5,51 +5,54 @@ const PERSONA_CONFIG = {
     name: 'Ravi',
     role: 'Retail Trader',
     emoji: '📈',
-    color: '#22d3ee',
+    color: '#58c4dc',
     glowClass: 'retail-glow',
-    bg: 'rgba(34,211,238,0.1)',
-    border: 'rgba(34,211,238,0.35)',
+    bg: 'rgba(88,196,220,0.08)',
+    border: 'rgba(88,196,220,0.25)',
     initials: 'RT',
   },
   whale: {
     name: 'The Whale',
     role: 'Institutional',
     emoji: '🐋',
-    color: '#818cf8',
+    color: '#a89cdb',
     glowClass: 'whale-glow',
-    bg: 'rgba(129,140,248,0.1)',
-    border: 'rgba(129,140,248,0.35)',
+    bg: 'rgba(168,156,219,0.08)',
+    border: 'rgba(168,156,219,0.25)',
     initials: 'W',
   },
   contrarian: {
     name: 'Vikram',
     role: 'Contrarian',
     emoji: '🔻',
-    color: '#f43f5e',
+    color: '#d65c6f',
     glowClass: 'contrarian-glow',
-    bg: 'rgba(244,63,94,0.1)',
-    border: 'rgba(244,63,94,0.35)',
+    bg: 'rgba(214,92,111,0.08)',
+    border: 'rgba(214,92,111,0.25)',
     initials: 'C',
   },
   synthesis: {
     name: 'Synthesis',
     role: 'AI Arbiter',
     emoji: '🧠',
-    color: '#10b981',
+    color: '#3dd68c',
     glowClass: 'synthesis-glow',
-    bg: 'rgba(16,185,129,0.1)',
-    border: 'rgba(16,185,129,0.35)',
+    bg: 'rgba(61,214,140,0.08)',
+    border: 'rgba(61,214,140,0.25)',
     initials: 'S',
   },
 }
 
 /**
  * AgentNode
- * Circular PFP node for a debate persona.
+ * Hexagonal PFP node for a debate persona.
  * isActive = currently speaking → applies glow + scale.
  */
 export default function AgentNode({ persona, isActive, hallucinated = false }) {
   const cfg = PERSONA_CONFIG[persona] || PERSONA_CONFIG.retail
+
+  // Hexagonal clip path
+  const hexClip = 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)'
 
   return (
     <motion.div
@@ -58,41 +61,42 @@ export default function AgentNode({ persona, isActive, hallucinated = false }) {
     >
       {/* Outer ring (pulse when active) */}
       <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        {/* Wavy Ripple Animation (Active Speaker) */}
-        {isActive && [0, 1, 2].map((i) => (
+        {/* Ripple Animation (Active Speaker) — restrained */}
+        {isActive && [0, 1].map((i) => (
           <motion.div
             key={i}
-            initial={{ scale: 0.8, opacity: 0.6 }}
-            animate={{ scale: 1.6, opacity: 0 }}
+            initial={{ scale: 0.85, opacity: 0.4 }}
+            animate={{ scale: 1.5, opacity: 0 }}
             transition={{
-              duration: 2,
+              duration: 2.5,
               repeat: Infinity,
-              delay: i * 0.6,
+              delay: i * 0.8,
               ease: "easeOut"
             }}
             style={{
               position: 'absolute',
-              width: 84, height: 84,
-              borderRadius: '50%',
-              border: `1.5px solid ${cfg.color}`,
+              width: 82, height: 82,
+              clipPath: hexClip,
+              border: `1px solid ${cfg.color}`,
+              background: `${cfg.color}08`,
               pointerEvents: 'none',
               zIndex: -1,
             }}
           />
         ))}
 
-        {/* Avatar circle */}
+        {/* Avatar — hexagonal */}
         <motion.div
-          animate={isActive ? { scale: 1.12 } : { scale: 1 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+          animate={isActive ? { scale: 1.08 } : { scale: 1 }}
+          transition={{ type: 'spring', stiffness: 280, damping: 22 }}
           className={isActive ? cfg.glowClass : ''}
           style={{
             width: 72, height: 72,
-            borderRadius: '50%',
-            background: `radial-gradient(circle at 35% 35%, ${cfg.color}33, ${cfg.bg})`,
-            border: `2.5px solid ${isActive ? cfg.color : cfg.border}`,
+            clipPath: hexClip,
+            background: `linear-gradient(135deg, ${cfg.color}18, ${cfg.bg})`,
+            border: `2px solid ${isActive ? cfg.color : cfg.border}`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '1.6rem',
+            fontSize: '1.5rem',
             cursor: 'default',
             position: 'relative',
             overflow: 'hidden',
@@ -104,29 +108,29 @@ export default function AgentNode({ persona, isActive, hallucinated = false }) {
           {hallucinated && (
             <motion.div
               initial={{ opacity: 0 }}
-              animate={{ opacity: [0, 0.7, 0, 0.7, 0] }}
+              animate={{ opacity: [0, 0.6, 0, 0.6, 0] }}
               transition={{ duration: 1, times: [0, 0.2, 0.4, 0.6, 1] }}
               style={{
                 position: 'absolute', inset: 0,
-                background: 'rgba(244,63,94,0.45)',
-                borderRadius: '50%',
+                background: 'rgba(229,56,79,0.4)',
+                clipPath: hexClip,
               }}
             />
           )}
         </motion.div>
 
-        {/* Active speaker indicator dot */}
+        {/* Active speaker indicator */}
         {isActive && (
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             style={{
               position: 'absolute',
-              bottom: 2, right: 2,
-              width: 14, height: 14,
+              bottom: 0, right: 4,
+              width: 12, height: 12,
               borderRadius: '50%',
               background: cfg.color,
-              border: '2px solid #050810',
+              border: '2px solid var(--bg-base)',
               boxShadow: `0 0 8px ${cfg.color}`,
             }}
           />
@@ -136,13 +140,18 @@ export default function AgentNode({ persona, isActive, hallucinated = false }) {
       {/* Name + role */}
       <div style={{ textAlign: 'center' }}>
         <div style={{
-          fontSize: '0.82rem', fontWeight: 700,
+          fontFamily: 'var(--font-body)',
+          fontSize: '0.78rem', fontWeight: 700,
           color: isActive ? cfg.color : 'var(--text-primary)',
           transition: 'color 0.3s',
         }}>
           {cfg.name}
         </div>
-        <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', marginTop: 1 }}>
+        <div style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.6rem', color: 'var(--text-muted)',
+          marginTop: 1, letterSpacing: '0.04em',
+        }}>
           {cfg.role}
         </div>
       </div>

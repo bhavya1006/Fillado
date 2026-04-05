@@ -52,30 +52,53 @@ export default function GraphIntelligence() {
       width: '100%', 
       height: 'calc(100vh - 160px)', 
       overflow: 'hidden',
-      border: '1px solid rgba(99,102,241,0.2)'
+      border: '1px solid var(--border)',
+      borderRadius: 2,
     }}>
       
       {/* Header / Legend */}
       <div style={{
         position: 'absolute', top: 24, left: 24, zIndex: 10,
-        background: 'rgba(5,8,16,0.6)', backdropFilter: 'blur(10px)',
-        padding: '16px 20px', borderRadius: 12, border: '1px solid rgba(255,255,255,0.08)'
+        background: 'rgba(7,8,13,0.75)', backdropFilter: 'blur(12px)',
+        padding: '18px 22px', borderRadius: 2,
+        border: '1px solid var(--border)',
       }}>
-        <div style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: 6, color: 'var(--text-primary)' }}>
-          Knowledge Graph 🕸
+        <div style={{
+          fontFamily: 'var(--font-display)', fontSize: '1.3rem',
+          fontWeight: 400, fontStyle: 'italic',
+          marginBottom: 8, color: 'var(--text-primary)',
+        }}>
+          Knowledge Graph
         </div>
-        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 12, maxWidth: 300, lineHeight: 1.5 }}>
-          Auto-discovered supply chain vulnerabilities and entity links. Graph dynamically updates on Neo4j append calls.
+        <div style={{
+          fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: 14,
+          maxWidth: 280, lineHeight: 1.55,
+          fontFamily: 'var(--font-body)',
+        }}>
+          Auto-discovered supply chain vulnerabilities and entity links. 
+          Graph dynamically updates on Neo4j append calls.
         </div>
-        <div style={{ display: 'flex', gap: 12, fontSize: '0.7rem', fontWeight: 600 }}>
+        <div style={{
+          display: 'flex', gap: 14, fontSize: '0.65rem', fontWeight: 600,
+          fontFamily: 'var(--font-mono)',
+        }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#f59e0b' }}></span> Trigger Event
+            <span style={{
+              width: 8, height: 8, background: '#d4af37',
+              clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)',
+            }}></span> Trigger
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#6366f1' }}></span> Extracted Entity
+            <span style={{
+              width: 8, height: 8, background: '#a89cdb',
+              clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)',
+            }}></span> Entity
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#10b981' }}></span> Public Ticker
+            <span style={{
+              width: 8, height: 8, background: '#3dd68c',
+              clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)',
+            }}></span> Ticker
           </span>
         </div>
       </div>
@@ -84,12 +107,22 @@ export default function GraphIntelligence() {
       <AnimatePresence>
         {loading && graphData.nodes.length === 0 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 20 }}>
-            <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Extracting supply chain nodes...</div>
+            style={{
+              position: 'absolute', inset: 0, display: 'flex', alignItems: 'center',
+              justifyContent: 'center', zIndex: 20,
+            }}>
+            <div style={{
+              fontSize: '0.85rem', color: 'var(--text-muted)',
+              fontFamily: 'var(--font-mono)', fontStyle: 'italic',
+            }}>Extracting supply chain nodes...</div>
           </motion.div>
         )}
         {error && (
-          <motion.div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: '#f43f5e', zIndex: 20 }}>
+          <motion.div style={{
+            position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+            color: 'var(--accent-crimson)', zIndex: 20,
+            fontFamily: 'var(--font-mono)', fontSize: '0.85rem',
+          }}>
             Error loading Graph: {error}
           </motion.div>
         )}
@@ -101,13 +134,13 @@ export default function GraphIntelligence() {
         backgroundColor="transparent"
         nodeLabel="id"
         nodeColor={node => {
-          if (node.group === 3) return '#f59e0b' // yellow for base event
-          if (node.group === 1) return '#10b981' // green for tickers
-          return '#6366f1' // purple for entities
+          if (node.group === 3) return '#d4af37' // gold for base event
+          if (node.group === 1) return '#3dd68c' // jade for tickers
+          return '#a89cdb' // lavender for entities
         }}
         nodeRelSize={7}
         nodeVal={node => node.val || 15}
-        linkColor={() => 'rgba(148,163,184,0.3)'}
+        linkColor={() => 'rgba(212,175,55,0.15)'}
         linkWidth={1.5}
         linkDirectionalArrowLength={4.5}
         linkDirectionalArrowRelPos={1}
@@ -119,10 +152,10 @@ export default function GraphIntelligence() {
         nodeCanvasObject={(node, ctx, globalScale) => {
           const label = node.id
           const fontSize = 12 / globalScale
-          ctx.font = `600 ${fontSize}px Inter, sans-serif`
+          ctx.font = `600 ${fontSize}px 'DM Sans', sans-serif`
           ctx.textAlign = 'center'
           ctx.textBaseline = 'middle'
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
+          ctx.fillStyle = 'rgba(234, 230, 220, 0.9)'
           ctx.fillText(label, node.x, node.y + (node.val ? Math.sqrt(node.val)*2 : 8) + fontSize)
         }}
         linkCanvasObjectMode={() => 'after'}
@@ -143,13 +176,13 @@ export default function GraphIntelligence() {
           if (textAngle < -Math.PI / 2) textAngle = -(-Math.PI - textAngle);
           
           const fontSize = 8 / globalScale;
-          ctx.font = `500 ${fontSize}px monospace`;
+          ctx.font = `500 ${fontSize}px 'IBM Plex Mono', monospace`;
           ctx.save();
           ctx.translate(textPos.x, textPos.y);
           ctx.rotate(textAngle);
           ctx.textAlign = 'center';
           ctx.textBaseline = 'bottom';
-          ctx.fillStyle = 'rgba(129, 140, 248, 0.8)';
+          ctx.fillStyle = 'rgba(212, 175, 55, 0.6)';
           ctx.fillText(label, 0, -2);
           ctx.restore();
         }}
@@ -160,9 +193,12 @@ export default function GraphIntelligence() {
         onClick={fetchGraph}
         style={{
           position: 'absolute', bottom: 24, right: 24, zIndex: 10,
-          background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.4)',
-          color: '#818cf8', padding: '8px 16px', borderRadius: 8,
-          fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer',
+          background: 'rgba(212,175,55,0.08)',
+          border: '1px solid rgba(212,175,55,0.2)',
+          color: 'var(--accent-gold)', padding: '8px 16px', borderRadius: 2,
+          fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer',
+          fontFamily: 'var(--font-mono)', letterSpacing: '0.06em',
+          transition: 'all 0.2s',
         }}
       >
         ↻ Sync Data

@@ -247,15 +247,19 @@ export default function TradingFloor({ messages, lastMessage, wsStatus }) {
             exit={{ opacity: 0, y: -20 }}
             style={{
               position: 'absolute', top: -10, left: 0, right: 0, zIndex: 100,
-              background: 'rgba(239,68,68,0.2)', border: '1px solid #ef4444',
-              borderRadius: 8, padding: '12px 16px', color: '#fca5a5',
+              background: 'rgba(229,56,79,0.12)', border: '1px solid rgba(229,56,79,0.4)',
+              borderRadius: 2, padding: '12px 16px', color: 'var(--accent-crimson)',
               display: 'flex', alignItems: 'center', gap: 10,
-              boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
+              boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+              fontFamily: 'var(--font-mono)', fontSize: '0.8rem',
             }}
           >
-            <span>🚨</span>
-            <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{errorMsg}</span>
-            <button onClick={() => setErrorMsg(null)} style={{ background: 'none', border: 'none', color: '#fff', marginLeft: 'auto', cursor: 'pointer' }}>✕</button>
+            <span>▲</span>
+            <span style={{ fontWeight: 600 }}>{errorMsg}</span>
+            <button onClick={() => setErrorMsg(null)} style={{
+              background: 'none', border: 'none', color: 'var(--text-muted)',
+              marginLeft: 'auto', cursor: 'pointer', fontSize: '0.9rem',
+            }}>✕</button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -271,16 +275,21 @@ export default function TradingFloor({ messages, lastMessage, wsStatus }) {
       {/* ── Phase header ── */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
         <div style={{
-          fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em',
-          color: debatePhase === 'debating' ? '#22d3ee' : debatePhase === 'complete' ? '#10b981' : 'var(--text-muted)',
+          fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.12em',
+          color: debatePhase === 'debating' ? 'var(--accent-jade)' : debatePhase === 'complete' ? 'var(--accent-gold)' : 'var(--text-muted)',
           textTransform: 'uppercase',
-          display: 'flex', alignItems: 'center', gap: 6,
+          display: 'flex', alignItems: 'center', gap: 8,
+          fontFamily: 'var(--font-mono)',
         }}>
           {debatePhase === 'debating' && (
             <motion.span
               animate={{ opacity: [1, 0.3, 1] }}
               transition={{ duration: 0.9, repeat: Infinity }}
-              style={{ display: 'inline-block', width: 7, height: 7, borderRadius: '50%', background: '#22d3ee' }}
+              style={{
+                display: 'inline-block', width: 6, height: 6, borderRadius: '50%',
+                background: 'var(--accent-jade)',
+                boxShadow: '0 0 6px rgba(61,214,140,0.5)',
+              }}
             />
           )}
           {debatePhase === 'idle' && '◎ Awaiting debate trigger'}
@@ -289,11 +298,12 @@ export default function TradingFloor({ messages, lastMessage, wsStatus }) {
         </div>
         {debatePhase !== 'idle' && (
           <span style={{
-            fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.08em',
-            padding: '2px 8px', borderRadius: 5,
-            background: debateMode === 'LIVE' ? 'rgba(16,185,129,0.12)' : 'rgba(99,102,241,0.12)',
-            border: `1px solid ${debateMode === 'LIVE' ? 'rgba(16,185,129,0.3)' : 'rgba(99,102,241,0.3)'}`,
-            color: debateMode === 'LIVE' ? '#10b981' : '#818cf8',
+            fontSize: '0.55rem', fontWeight: 700, letterSpacing: '0.1em',
+            padding: '2px 8px', borderRadius: 2,
+            fontFamily: 'var(--font-mono)',
+            background: debateMode === 'LIVE' ? 'rgba(61,214,140,0.08)' : 'rgba(212,175,55,0.08)',
+            border: `1px solid ${debateMode === 'LIVE' ? 'rgba(61,214,140,0.25)' : 'rgba(212,175,55,0.25)'}`,
+            color: debateMode === 'LIVE' ? 'var(--accent-jade)' : 'var(--accent-gold)',
           }}>
             {debateMode === 'LIVE' ? '⚡ LIVE AI' : '◎ SHOWDOWN'}
           </span>
@@ -304,24 +314,26 @@ export default function TradingFloor({ messages, lastMessage, wsStatus }) {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             style={{
-              background: 'rgba(244,63,94,0.1)',
-              border: '1px solid rgba(244,63,94,0.35)',
-              borderRadius: 8, padding: '3px 10px',
-              fontSize: '0.68rem', color: '#f43f5e', fontWeight: 700,
+              background: 'rgba(229,56,79,0.06)',
+              border: '1px solid rgba(229,56,79,0.25)',
+              borderRadius: 2, padding: '3px 10px',
+              fontSize: '0.62rem', color: 'var(--accent-crimson)',
+              fontWeight: 700, fontFamily: 'var(--font-mono)',
             }}
           >
-            🛡 {hallucinationEvents.length} intercept{hallucinationEvents.length > 1 ? 's' : ''}
+            ▲ {hallucinationEvents.length} intercept{hallucinationEvents.length > 1 ? 's' : ''}
           </motion.div>
         )}
 
         {mcpToolCalls.length > 0 && (
           <div style={{
-            background: 'rgba(129,140,248,0.08)',
-            border: '1px solid rgba(129,140,248,0.25)',
-            borderRadius: 8, padding: '3px 10px',
-            fontSize: '0.68rem', color: '#818cf8', fontWeight: 700,
+            background: 'rgba(212,175,55,0.06)',
+            border: '1px solid rgba(212,175,55,0.2)',
+            borderRadius: 2, padding: '3px 10px',
+            fontSize: '0.62rem', color: 'var(--accent-gold)',
+            fontWeight: 700, fontFamily: 'var(--font-mono)',
           }}>
-            🔌 {mcpToolCalls.length} MCP call{mcpToolCalls.length > 1 ? 's' : ''}
+            ◆ {mcpToolCalls.length} MCP call{mcpToolCalls.length > 1 ? 's' : ''}
           </div>
         )}
       </div>
@@ -347,11 +359,11 @@ export default function TradingFloor({ messages, lastMessage, wsStatus }) {
                 return (
                   <line key={i}
                     x1={a.x} y1={a.y} x2={b.x} y2={b.y}
-                    stroke="rgba(99,102,241,0.15)" strokeWidth="1" strokeDasharray="4 6"
+                    stroke="rgba(212,175,55,0.1)" strokeWidth="1" strokeDasharray="4 6"
                   />
                 )
               })}
-              <circle cx={0} cy={0} r={4} fill="rgba(99,102,241,0.3)" />
+              <circle cx={0} cy={0} r={3} fill="rgba(212,175,55,0.25)" />
             </svg>
 
             {/* Rotating container — the whole triangle rotates */}
@@ -401,17 +413,21 @@ export default function TradingFloor({ messages, lastMessage, wsStatus }) {
           {/* Auto-Scrolling MCP tool calls feed underneath agents */}
           <div style={{ marginTop: 20, width: '100%', maxWidth: 320 }}>
             <div style={{
-              fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700,
-              letterSpacing: '0.08em', marginBottom: 8, paddingLeft: 4
+              fontSize: '0.58rem', color: 'var(--text-muted)', fontWeight: 700,
+              letterSpacing: '0.12em', marginBottom: 8, paddingLeft: 4,
+              fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
+              display: 'flex', alignItems: 'center', gap: 6,
             }}>
-              🔌 REAL-TIME MCP TERMINAL
+              <span style={{ color: 'var(--accent-gold)', opacity: 0.5 }}>◆</span>
+              Real-Time MCP Terminal
             </div>
             <div
               ref={mcpRef}
               style={{
                 height: 140, overflowY: 'auto', paddingRight: 6,
                 display: 'flex', flexDirection: 'column', gap: 6,
-                background: 'rgba(0,0,0,0.2)', borderRadius: 10, padding: '10px'
+                background: 'rgba(0,0,0,0.3)', borderRadius: 2, padding: '10px',
+                border: '1px solid var(--border-subtle)',
               }}
             >
               {mcpToolCalls.map((call, i) => (
@@ -421,24 +437,27 @@ export default function TradingFloor({ messages, lastMessage, wsStatus }) {
                   transition={{ type: 'spring' }}
                   style={{
                     display: 'flex', alignItems: 'flex-start', gap: 8,
-                    background: 'rgba(129,140,248,0.07)',
-                    border: '1px solid rgba(129,140,248,0.2)',
-                    borderRadius: 8, padding: '8px 12px',
+                    background: 'rgba(212,175,55,0.04)',
+                    border: '1px solid rgba(212,175,55,0.12)',
+                    borderRadius: 2, padding: '8px 12px',
                   }}
                 >
-                  <span style={{ fontSize: '0.75rem', marginTop: 2 }}>⚡</span>
+                  <span style={{
+                    fontSize: '0.6rem', marginTop: 2, color: 'var(--accent-gold)', opacity: 0.6,
+                  }}>⚡</span>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{
-                      fontFamily: 'JetBrains Mono, monospace',
-                      fontSize: '0.7rem', color: '#818cf8', fontWeight: 600
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '0.68rem', color: 'var(--accent-gold)', fontWeight: 600
                     }}>
                       {call.tool}()
                     </div>
                     {call.detail && (
                       <div style={{
-                        fontSize: '0.6rem', color: 'var(--text-muted)',
-                        marginTop: 3, lineHeight: 1.4,
+                        fontSize: '0.58rem', color: 'var(--text-muted)',
+                        marginTop: 3, lineHeight: 1.45,
                         wordBreak: 'break-word', maxHeight: '3.6rem', overflow: 'hidden',
+                        fontFamily: 'var(--font-mono)',
                       }}>
                         {call.detail}
                       </div>
@@ -447,7 +466,10 @@ export default function TradingFloor({ messages, lastMessage, wsStatus }) {
                 </motion.div>
               ))}
               {mcpToolCalls.length === 0 && (
-                <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textAlign: 'center', marginTop: 30 }}>
+                <div style={{
+                  fontSize: '0.62rem', color: 'var(--text-muted)', textAlign: 'center',
+                  marginTop: 30, fontFamily: 'var(--font-mono)', fontStyle: 'italic',
+                }}>
                   Awaiting external tool triggers...
                 </div>
               )}
@@ -459,11 +481,10 @@ export default function TradingFloor({ messages, lastMessage, wsStatus }) {
         <div style={{
           display: 'flex', flexDirection: 'column', gap: 16,
           height: '100%', maxHeight: 540,
-          background: 'rgba(255,255,255,0.015)',
-          border: '1px solid rgba(255,255,255,0.05)',
-          borderRadius: 16,
+          background: 'rgba(0,0,0,0.15)',
+          border: '1px solid var(--border-subtle)',
+          borderRadius: 2,
           padding: 16,
-          boxShadow: 'inset 0 0 40px rgba(0,0,0,0.5)'
         }}>
           {/* Active speaker bubble */}
           <SpeechBubble
@@ -478,7 +499,7 @@ export default function TradingFloor({ messages, lastMessage, wsStatus }) {
             ref={scrollRef}
             style={{
               flex: 1, overflowY: 'auto',
-              display: 'flex', flexDirection: 'column', gap: 12,
+              display: 'flex', flexDirection: 'column', gap: 10,
               paddingRight: 8,
             }}
           >
@@ -489,14 +510,20 @@ export default function TradingFloor({ messages, lastMessage, wsStatus }) {
 
               return (
                 <div key={chat.id} style={{
-                  background: 'rgba(255,255,255,0.02)',
-                  border: '1px solid rgba(255,255,255,0.05)',
-                  borderRadius: 12, padding: '14px 18px',
+                  background: 'rgba(255,255,255,0.015)',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: 2, padding: '14px 18px',
                 }}>
-                  <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', marginBottom: 8, fontWeight: 700, letterSpacing: '0.05em' }}>
+                  <div style={{
+                    fontSize: '0.62rem', color: 'var(--text-muted)', marginBottom: 8,
+                    fontWeight: 700, letterSpacing: '0.08em',
+                    fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
+                  }}>
                     {chat.speaker.toUpperCase()}
                   </div>
-                  <div className="markdown-wrapper" style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                  <div className="markdown-wrapper" style={{
+                    fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.65,
+                  }}>
                     <ReactMarkdown>{chat.content}</ReactMarkdown>
                   </div>
                 </div>
@@ -513,17 +540,28 @@ export default function TradingFloor({ messages, lastMessage, wsStatus }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 180, damping: 22 }}
+            className="corner-marks"
             style={{
               marginTop: 28,
-              background: 'linear-gradient(135deg, rgba(16,185,129,0.06), rgba(13,17,23,0.95))',
-              border: '1.5px solid rgba(16,185,129,0.25)',
-              borderRadius: 16, padding: 20,
+              background: 'linear-gradient(135deg, rgba(61,214,140,0.04), rgba(7,8,13,0.95))',
+              border: '1px solid rgba(61,214,140,0.2)',
+              borderRadius: 2, padding: 22,
             }}
           >
-            <div style={{ fontSize: '0.7rem', color: '#10b981', fontWeight: 700, letterSpacing: '0.08em', marginBottom: 10 }}>
-              🧠 SYNTHESIS AGENT ANALYSIS
+            <div style={{
+              fontSize: '0.62rem', color: 'var(--accent-jade)', fontWeight: 700,
+              letterSpacing: '0.12em', marginBottom: 12,
+              fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
+              display: 'flex', alignItems: 'center', gap: 6,
+            }}>
+              <span style={{ width: 12, height: 1, background: 'var(--accent-jade)', display: 'inline-block' }} />
+              Synthesis Agent Analysis
             </div>
-            <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.65, whiteSpace: 'pre-wrap' }}>
+            <div style={{
+              fontSize: '0.84rem', color: 'var(--text-secondary)',
+              lineHeight: 1.7, whiteSpace: 'pre-wrap',
+              fontFamily: 'var(--font-body)',
+            }}>
               {transcripts.synthesis}
             </div>
           </motion.div>
@@ -534,10 +572,13 @@ export default function TradingFloor({ messages, lastMessage, wsStatus }) {
       {Object.keys(stockCharts).length > 0 && (
         <div style={{ marginTop: 24 }}>
           <div style={{
-            fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700,
-            letterSpacing: '0.08em', marginBottom: 12,
+            fontSize: '0.58rem', color: 'var(--text-muted)', fontWeight: 700,
+            letterSpacing: '0.12em', marginBottom: 14,
+            fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
+            display: 'flex', alignItems: 'center', gap: 6,
           }}>
-            📈 LIVE MARKET DATA — SYNTHESIS AGENT INTELLIGENCE
+            <span style={{ width: 12, height: 1, background: 'var(--accent-gold)', display: 'inline-block', opacity: 0.5 }} />
+            Live Market Data — Synthesis Agent Intelligence
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 16 }}>
             {Object.entries(stockCharts).map(([ticker, chartInfo], idx) => (

@@ -5,9 +5,9 @@ import {
 } from 'recharts'
 import { motion } from 'framer-motion'
 
-// ─── Persona colour map ──────────────────────────────────────────────────────
+// ─── Refined color palette ────────────────────────────────────────────────────
 const TICKER_COLORS = [
-  '#22d3ee', '#818cf8', '#f43f5e', '#10b981', '#f59e0b', '#a78bfa',
+  '#d4af37', '#58c4dc', '#d65c6f', '#3dd68c', '#a89cdb', '#c9973b',
 ]
 
 // ─── Custom tooltip ──────────────────────────────────────────────────────────
@@ -16,25 +16,29 @@ function CustomTooltip({ active, payload, label }) {
   const d = payload[0]?.payload || {}
   return (
     <div style={{
-      background: 'rgba(13, 17, 23, 0.96)',
-      border: '1px solid rgba(99,102,241,0.3)',
-      borderRadius: 10, padding: '10px 14px',
-      fontSize: '0.75rem', color: 'var(--text-secondary)',
-      boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+      background: 'rgba(7, 8, 13, 0.96)',
+      border: '1px solid var(--border)',
+      borderRadius: 2, padding: '10px 14px',
+      fontSize: '0.72rem', color: 'var(--text-secondary)',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
       minWidth: 160,
+      fontFamily: 'var(--font-mono)',
     }}>
-      <div style={{ fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>{label}</div>
+      <div style={{
+        fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6,
+        fontFamily: 'var(--font-body)',
+      }}>{label}</div>
       {d.close !== undefined && (
-        <div>Close: <span style={{ color: '#22d3ee', fontWeight: 700 }}>₹{d.close?.toLocaleString('en-IN')}</span></div>
+        <div>Close: <span style={{ color: 'var(--accent-gold)', fontWeight: 700 }}>₹{d.close?.toLocaleString('en-IN')}</span></div>
       )}
       {d.high !== undefined && (
-        <div>High: <span style={{ color: '#10b981' }}>₹{d.high?.toLocaleString('en-IN')}</span></div>
+        <div>High: <span style={{ color: 'var(--accent-jade)' }}>₹{d.high?.toLocaleString('en-IN')}</span></div>
       )}
       {d.low !== undefined && (
-        <div>Low: <span style={{ color: '#f43f5e' }}>₹{d.low?.toLocaleString('en-IN')}</span></div>
+        <div>Low: <span style={{ color: 'var(--accent-crimson)' }}>₹{d.low?.toLocaleString('en-IN')}</span></div>
       )}
       {d.volume !== undefined && (
-        <div>Volume: <span style={{ color: '#818cf8' }}>{(d.volume / 1_000_000).toFixed(2)}M</span></div>
+        <div>Volume: <span style={{ color: 'var(--accent-steel)' }}>{(d.volume / 1_000_000).toFixed(2)}M</span></div>
       )}
     </div>
   )
@@ -47,11 +51,12 @@ function TrendBadge({ changePct }) {
   return (
     <span style={{
       display: 'inline-flex', alignItems: 'center', gap: 3,
-      background: isUp ? 'rgba(16,185,129,0.12)' : 'rgba(244,63,94,0.12)',
-      border: `1px solid ${isUp ? 'rgba(16,185,129,0.3)' : 'rgba(244,63,94,0.3)'}`,
-      color: isUp ? '#10b981' : '#f43f5e',
-      borderRadius: 6, padding: '2px 8px',
-      fontSize: '0.7rem', fontWeight: 700,
+      background: isUp ? 'rgba(61,214,140,0.08)' : 'rgba(229,56,79,0.08)',
+      border: `1px solid ${isUp ? 'rgba(61,214,140,0.25)' : 'rgba(229,56,79,0.25)'}`,
+      color: isUp ? 'var(--accent-jade)' : 'var(--accent-crimson)',
+      borderRadius: 2, padding: '2px 8px',
+      fontSize: '0.66rem', fontWeight: 700,
+      fontFamily: 'var(--font-mono)',
     }}>
       {isUp ? '▲' : '▼'} {Math.abs(changePct).toFixed(2)}%
     </span>
@@ -82,33 +87,37 @@ export default function StockChart({ ticker, data, currentPrice, changePct, mode
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: 'spring', stiffness: 200, damping: 24 }}
+      className="corner-marks"
       style={{
-        background: 'rgba(255,255,255,0.018)',
-        border: `1px solid ${color}44`,
-        borderRadius: 14, padding: '16px 18px',
-        boxShadow: `0 0 24px ${color}1a`,
+        background: 'rgba(0,0,0,0.2)',
+        border: `1px solid ${color}22`,
+        borderRadius: 2, padding: '16px 18px',
       }}
     >
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
         <div style={{
-          background: `${color}22`, border: `1px solid ${color}55`,
-          borderRadius: 6, padding: '3px 10px',
-          fontFamily: 'JetBrains Mono, monospace',
-          fontSize: '0.78rem', color, fontWeight: 700, letterSpacing: '0.06em',
+          background: `${color}12`, border: `1px solid ${color}33`,
+          borderRadius: 2, padding: '3px 10px',
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.74rem', color, fontWeight: 700, letterSpacing: '0.08em',
         }}>
           {ticker}
         </div>
         {currentPrice && (
-          <span style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+          <span style={{
+            fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)',
+            fontFamily: 'var(--font-mono)',
+          }}>
             ₹{currentPrice?.toLocaleString('en-IN')}
           </span>
         )}
         <TrendBadge changePct={changePct} />
         <span style={{
-          marginLeft: 'auto', fontSize: '0.6rem',
-          color: mode === 'live' ? '#10b981' : 'var(--text-muted)',
-          fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em',
+          marginLeft: 'auto', fontSize: '0.55rem',
+          color: mode === 'live' ? 'var(--accent-jade)' : 'var(--text-muted)',
+          fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em',
+          fontFamily: 'var(--font-mono)',
         }}>
           {mode === 'live' ? '● LIVE' : '◎ SHOWDOWN'}
         </span>
@@ -117,30 +126,30 @@ export default function StockChart({ ticker, data, currentPrice, changePct, mode
       {/* Chart */}
       <ResponsiveContainer width="100%" height={200}>
         <ComposedChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: -8 }}>
-          <CartesianGrid strokeDasharray="2 4" stroke="rgba(255,255,255,0.04)" />
+          <CartesianGrid strokeDasharray="2 4" stroke="rgba(255,255,255,0.03)" />
           <XAxis
             dataKey="dateLabel"
-            tick={{ fontSize: 10, fill: 'var(--text-muted)' }}
+            tick={{ fontSize: 10, fill: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}
             tickLine={false} axisLine={false}
             interval="preserveStartEnd"
           />
           <YAxis
             domain={[minPrice, maxPrice]}
-            tick={{ fontSize: 10, fill: 'var(--text-muted)' }}
+            tick={{ fontSize: 10, fill: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}
             tickLine={false} axisLine={false}
             tickFormatter={v => `₹${(v / 1000).toFixed(1)}k`}
             width={48}
           />
           <Tooltip content={<CustomTooltip />} />
-          <Bar dataKey="volume" yAxisId={1} fill={`${color}18`} radius={[2, 2, 0, 0]} />
+          <Bar dataKey="volume" yAxisId={1} fill={`${color}12`} radius={[1, 1, 0, 0]} />
           <YAxis yAxisId={1} orientation="right" hide />
           <Line
             type="monotone"
             dataKey="close"
             stroke={color}
-            strokeWidth={2}
+            strokeWidth={1.5}
             dot={false}
-            activeDot={{ r: 4, fill: color, stroke: 'transparent' }}
+            activeDot={{ r: 3, fill: color, stroke: 'transparent' }}
           />
         </ComposedChart>
       </ResponsiveContainer>

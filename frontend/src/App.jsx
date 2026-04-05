@@ -36,66 +36,89 @@ export default function App() {
       {/* ── Nav bar ── */}
       <header style={{
         position: 'sticky', top: 0, zIndex: 50,
-        background: 'rgba(5,8,16,0.85)',
-        backdropFilter: 'blur(20px)',
+        background: 'rgba(7,8,13,0.88)',
+        backdropFilter: 'blur(24px) saturate(1.3)',
         borderBottom: '1px solid var(--border)',
         padding: '0 32px',
       }}>
         <div style={{
           maxWidth: 1280, margin: '0 auto',
-          display: 'flex', alignItems: 'center', height: 60, gap: 20,
+          display: 'flex', alignItems: 'center', height: 64, gap: 24,
         }}>
           {/* Logo */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginRight: 32 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginRight: 36 }}>
             <motion.div
-              animate={{ rotate: [0, 360] }}
-              transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-              style={{ fontSize: '1.4rem' }}
-            >
-              ◈
-            </motion.div>
+              animate={{ opacity: [0.4, 1, 0.4] }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+              style={{
+                width: 10, height: 10, borderRadius: '50%',
+                background: 'var(--accent-gold)',
+                boxShadow: '0 0 12px rgba(212,175,55,0.5)',
+              }}
+            />
             <div>
-              <div className="gradient-text" style={{ fontSize: '1.15rem', fontWeight: 900, letterSpacing: '-0.02em' }}>
+              <div style={{
+                fontFamily: 'var(--font-display)', fontSize: '1.35rem',
+                fontWeight: 400, letterSpacing: '-0.01em',
+                color: 'var(--text-primary)',
+              }}>
                 Fillado
               </div>
-              <div style={{ fontSize: '0.55rem', color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.08em', marginTop: -2 }}>
-                REALITY-ANCHORED MARKET INTELLIGENCE
+              <div style={{
+                fontSize: '0.52rem', color: 'var(--text-muted)', fontWeight: 600,
+                letterSpacing: '0.14em', marginTop: -3,
+                fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
+              }}>
+                Market Intelligence
               </div>
             </div>
+            {/* Diagonal separator */}
+            <div style={{
+              width: 1, height: 28, background: 'var(--border)',
+              transform: 'rotate(15deg)', marginLeft: 8,
+            }} />
           </div>
 
           {/* Tabs */}
-          <nav style={{ display: 'flex', gap: 4 }}>
+          <nav style={{ display: 'flex', gap: 2, position: 'relative' }}>
             {[
-              { id: 'dashboard', label: '📡 Radar', },
-              { id: 'trading-floor', label: '🎯 Trading Floor', badge: isDebating ? 'LIVE' : null },
-              { id: 'graph', label: '🕸 Knowledge Graph' },
+              { id: 'dashboard', label: 'Radar' },
+              { id: 'trading-floor', label: 'Trading Floor', badge: isDebating ? 'LIVE' : null },
+              { id: 'graph', label: 'Graph' },
             ].map(tab => (
               <button
                 key={tab.id}
                 id={`tab-${tab.id}`}
                 onClick={() => setActiveTab(tab.id)}
                 style={{
-                  background: activeTab === tab.id ? 'rgba(99,102,241,0.15)' : 'transparent',
-                  border: activeTab === tab.id ? '1px solid rgba(99,102,241,0.4)' : '1px solid transparent',
-                  borderRadius: 8, padding: '6px 16px',
-                  color: activeTab === tab.id ? 'var(--accent-purple)' : 'var(--text-muted)',
-                  fontSize: '0.8rem', fontWeight: 600,
-                  cursor: 'pointer', transition: 'all 0.2s',
+                  background: 'transparent',
+                  border: 'none',
+                  borderBottom: activeTab === tab.id
+                    ? '2px solid var(--accent-gold)'
+                    : '2px solid transparent',
+                  padding: '8px 18px',
+                  color: activeTab === tab.id ? 'var(--accent-gold)' : 'var(--text-muted)',
+                  fontSize: '0.78rem', fontWeight: 600,
+                  fontFamily: 'var(--font-body)',
+                  cursor: 'pointer',
+                  transition: 'all 0.25s',
                   display: 'flex', alignItems: 'center', gap: 8,
+                  letterSpacing: '0.04em',
+                  textTransform: 'uppercase',
                 }}
               >
                 {tab.label}
                 {tab.badge && (
                   <motion.span
-                    animate={{ opacity: [1, 0.4, 1] }}
+                    animate={{ opacity: [1, 0.3, 1] }}
                     transition={{ duration: 0.9, repeat: Infinity }}
                     style={{
-                      fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.06em',
-                      background: 'rgba(34,211,238,0.15)',
-                      border: '1px solid rgba(34,211,238,0.4)',
-                      color: '#22d3ee',
-                      borderRadius: 4, padding: '1px 5px',
+                      fontSize: '0.55rem', fontWeight: 800, letterSpacing: '0.08em',
+                      background: 'rgba(61,214,140,0.12)',
+                      border: '1px solid rgba(61,214,140,0.3)',
+                      color: 'var(--accent-jade)',
+                      borderRadius: 3, padding: '1px 5px',
+                      fontFamily: 'var(--font-mono)',
                     }}
                   >
                     {tab.badge}
@@ -105,27 +128,35 @@ export default function App() {
             ))}
           </nav>
 
-          {/* Right: hackathon badge & History btn */}
-          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 16 }}>
+          {/* Right: History btn & badge */}
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 14 }}>
             <button
               onClick={() => setIsHistoryOpen(true)}
               style={{
-                background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.3)',
-                borderRadius: 8, padding: '6px 14px', color: '#818cf8',
-                fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer',
-                display: 'flex', alignItems: 'center', gap: 6
+                background: 'rgba(212,175,55,0.06)',
+                border: '1px solid rgba(212,175,55,0.18)',
+                borderRadius: 'var(--radius-sm)',
+                padding: '6px 14px',
+                color: 'var(--accent-gold)',
+                fontSize: '0.72rem', fontWeight: 600,
+                fontFamily: 'var(--font-mono)',
+                cursor: 'pointer',
+                display: 'flex', alignItems: 'center', gap: 6,
+                transition: 'all 0.2s',
+                letterSpacing: '0.04em',
               }}
             >
-              🕒 Debate History
+              ◷ History
             </button>
             <div style={{
-              fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.06em',
+              fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.08em',
               color: 'var(--text-muted)',
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.08)',
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid var(--border-subtle)',
               borderRadius: 20, padding: '4px 12px',
+              fontFamily: 'var(--font-mono)',
             }}>
-              ET GenAI Hackathon — AI for the Indian Investor
+              ET GenAI Hackathon
             </div>
           </div>
         </div>
@@ -137,48 +168,92 @@ export default function App() {
       {/* ── Hero section ── */}
       {activeTab === 'dashboard' && (
         <div style={{
-          background: 'linear-gradient(180deg, rgba(99,102,241,0.06) 0%, transparent 100%)',
+          background: 'linear-gradient(180deg, rgba(212,175,55,0.04) 0%, transparent 100%)',
           borderBottom: '1px solid var(--border)',
-          padding: '32px 32px 28px',
+          padding: '40px 32px 32px',
+          position: 'relative',
+          overflow: 'hidden',
         }}>
-          <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          {/* Decorative diagonal line */}
+          <div style={{
+            position: 'absolute', top: 0, right: 120, width: 1, height: '140%',
+            background: 'linear-gradient(to bottom, rgba(212,175,55,0.15), transparent)',
+            transform: 'rotate(-15deg)', transformOrigin: 'top center',
+          }} />
+          <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative' }}>
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             >
-              <h1 className="gradient-text" style={{
-                fontSize: 'clamp(1.8rem, 4vw, 3rem)', fontWeight: 900,
-                letterSpacing: '-0.03em', lineHeight: 1.1, marginBottom: 12,
+              <div style={{
+                fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.18em',
+                color: 'var(--accent-gold)', marginBottom: 12,
+                fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
+                display: 'flex', alignItems: 'center', gap: 8,
               }}>
-                Catch Market Signals Before<br />English News Reacts
+                <span style={{
+                  width: 20, height: 1, background: 'var(--accent-gold)', display: 'inline-block'
+                }} />
+                VERNACULAR INTELLIGENCE PLATFORM
+              </div>
+              <h1 style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(2rem, 4.5vw, 3.4rem)', fontWeight: 400,
+                fontStyle: 'italic',
+                letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: 16,
+                color: 'var(--text-primary)',
+              }}>
+                Catch Market Signals<br />
+                <span style={{ color: 'var(--accent-gold)' }}>Before English News Reacts</span>
               </h1>
-              <p style={{ fontSize: '1rem', color: 'var(--text-muted)', maxWidth: 600, lineHeight: 1.65 }}>
-                Fillado ingests vernacular disruption signals, debates them through a multi-agent AI Trading Floor,
-                and surfaces low-latency NSE alerts — powered by LangGraph + Groq + Neo4j.
+              <p style={{
+                fontSize: '0.92rem', color: 'var(--text-secondary)',
+                maxWidth: 560, lineHeight: 1.7,
+              }}>
+                Fillado ingests vernacular disruption signals, debates them through a 
+                multi-agent AI Trading Floor, and surfaces low-latency NSE alerts — 
+                powered by LangGraph, Groq &amp; Neo4j.
               </p>
             </motion.div>
 
             {/* Quick stats */}
-            <div style={{ display: 'flex', gap: 20, marginTop: 24, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: 16, marginTop: 28, flexWrap: 'wrap' }}>
               {[
-                { label: 'Agents', value: '3 + Synthesis', icon: '🤖' },
-                { label: 'LLM', value: 'Groq llama-3.3-70b-versatile', icon: '⚡' },
-                { label: 'Knowledge Graph', value: 'Neo4j AuraDB', icon: '🕸' },
-                { label: 'Latency', value: 'Real-Time WS', icon: '📡' },
-              ].map(stat => (
-                <div key={stat.label} style={{
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid var(--border)',
-                  borderRadius: 10, padding: '10px 16px',
-                  display: 'flex', alignItems: 'center', gap: 10,
-                }}>
-                  <span style={{ fontSize: '1.1rem' }}>{stat.icon}</span>
+                { label: 'Agents', value: '3 + Synthesis', icon: '◆' },
+                { label: 'LLM', value: 'Groq llama-3.3-70b', icon: '⚡' },
+                { label: 'Graph', value: 'Neo4j AuraDB', icon: '◈' },
+                { label: 'Latency', value: 'Real-Time WS', icon: '●' },
+              ].map((stat, i) => (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 + i * 0.08, duration: 0.5 }}
+                  className="corner-marks"
+                  style={{
+                    background: 'rgba(255,255,255,0.02)',
+                    border: '1px solid var(--border)',
+                    borderRadius: 2, padding: '12px 18px',
+                    display: 'flex', alignItems: 'center', gap: 12,
+                  }}
+                >
+                  <span style={{
+                    fontSize: '0.7rem', color: 'var(--accent-gold)', opacity: 0.7,
+                  }}>{stat.icon}</span>
                   <div>
-                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>{stat.value}</div>
-                    <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 600 }}>{stat.label}</div>
+                    <div style={{
+                      fontSize: '0.82rem', fontWeight: 700,
+                      color: 'var(--text-primary)',
+                      fontFamily: 'var(--font-mono)',
+                    }}>{stat.value}</div>
+                    <div style={{
+                      fontSize: '0.6rem', color: 'var(--text-muted)',
+                      fontWeight: 600, letterSpacing: '0.1em',
+                      textTransform: 'uppercase',
+                    }}>{stat.label}</div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -194,7 +269,7 @@ export default function App() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
-              transition={{ duration: 0.25 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             >
               <Dashboard
                 onTriggerEvent={handleTriggerEvent}
@@ -210,7 +285,7 @@ export default function App() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.25 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             >
               {/* Event banner */}
               {triggeredEvent && (
@@ -218,14 +293,28 @@ export default function App() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="glass-card-bright"
-                  style={{ padding: '14px 20px', marginBottom: 24, display: 'flex', alignItems: 'center', gap: 14 }}
+                  style={{
+                    padding: '14px 20px', marginBottom: 24,
+                    display: 'flex', alignItems: 'center', gap: 14,
+                  }}
                 >
-                  <span style={{ fontSize: '1.2rem' }}>🚨</span>
+                  <span style={{
+                    width: 3, height: 32, background: 'var(--accent-gold)',
+                    borderRadius: 2, flexShrink: 0,
+                  }} />
                   <div>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--accent-purple)', fontWeight: 700, letterSpacing: '0.06em' }}>
-                      ACTIVE EVENT
+                    <div style={{
+                      fontSize: '0.65rem', color: 'var(--accent-gold)',
+                      fontWeight: 700, letterSpacing: '0.1em',
+                      fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
+                    }}>
+                      Active Event
                     </div>
-                    <div style={{ fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 600, marginTop: 2 }}>
+                    <div style={{
+                      fontSize: '0.88rem', color: 'var(--text-primary)',
+                      fontWeight: 600, marginTop: 2,
+                      fontFamily: 'var(--font-display)', fontStyle: 'italic',
+                    }}>
                       {triggeredEvent.event}
                     </div>
                   </div>
@@ -233,7 +322,11 @@ export default function App() {
                     <motion.div
                       animate={{ opacity: [1, 0.3, 1] }}
                       transition={{ duration: 0.9, repeat: Infinity }}
-                      style={{ marginLeft: 'auto', fontSize: '0.72rem', color: '#22d3ee', fontWeight: 700 }}>
+                      style={{
+                        marginLeft: 'auto', fontSize: '0.65rem',
+                        color: 'var(--accent-jade)', fontWeight: 700,
+                        fontFamily: 'var(--font-mono)', letterSpacing: '0.06em',
+                      }}>
                       ● DEBATE IN PROGRESS
                     </motion.div>
                   )}
@@ -243,14 +336,27 @@ export default function App() {
               {!triggeredEvent ? (
                 <div style={{
                   display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                  minHeight: 400, gap: 16, textAlign: 'center',
+                  minHeight: 400, gap: 20, textAlign: 'center',
                 }}>
-                  <div style={{ fontSize: '3rem' }}>🎯</div>
-                  <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  <div style={{
+                    width: 48, height: 48, borderRadius: '50%',
+                    border: '2px solid var(--border)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '1.2rem', color: 'var(--accent-gold)', opacity: 0.5,
+                  }}>◎</div>
+                  <div style={{
+                    fontSize: '1.3rem', fontWeight: 400,
+                    color: 'var(--text-primary)',
+                    fontFamily: 'var(--font-display)', fontStyle: 'italic',
+                  }}>
                     Trading Floor Awaiting Signal
                   </div>
-                  <div style={{ fontSize: '0.84rem', color: 'var(--text-muted)', maxWidth: 400, lineHeight: 1.6 }}>
-                    Go to the Radar tab, select a vernacular event, and click "Simulate Vernacular Alert" to start the AI debate.
+                  <div style={{
+                    fontSize: '0.82rem', color: 'var(--text-muted)',
+                    maxWidth: 420, lineHeight: 1.65,
+                  }}>
+                    Navigate to the Radar tab, select a vernacular event, 
+                    and trigger an alert to initiate the AI debate.
                   </div>
                   <button id="go-to-radar-btn" className="btn-primary" onClick={() => setActiveTab('dashboard')}>
                     → Go to Radar
@@ -274,7 +380,7 @@ export default function App() {
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.98 }}
-              transition={{ duration: 0.25 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             >
               <GraphIntelligence />
             </motion.div>
@@ -285,21 +391,25 @@ export default function App() {
       {/* ── Footer ── */}
       <footer style={{
         borderTop: '1px solid var(--border)',
-        padding: '14px 32px',
-        background: 'rgba(5,8,16,0.7)',
+        padding: '16px 32px',
+        background: 'rgba(7,8,13,0.8)',
         backdropFilter: 'blur(12px)',
       }}>
         <div style={{
           maxWidth: 1280, margin: '0 auto',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          fontSize: '0.68rem', color: 'var(--text-muted)',
+          fontSize: '0.64rem', color: 'var(--text-muted)',
+          fontFamily: 'var(--font-mono)', letterSpacing: '0.04em',
         }}>
-          <span>Fillado © 2024 — ET GenAI Hackathon. Built with LangGraph + Groq + Neo4j AuraDB.</span>
-          <div style={{ display: 'flex', gap: 16 }}>
-            <span>🧠 GraphRAG</span>
-            <span>⚡ Groq</span>
-            <span>🕸 Neo4j</span>
-            <span>🔌 MCP</span>
+          <span>Fillado © 2024 — ET GenAI Hackathon. LangGraph · Groq · Neo4j AuraDB</span>
+          <div style={{ display: 'flex', gap: 18, alignItems: 'center' }}>
+            <span>GraphRAG</span>
+            <span style={{ color: 'var(--border)', fontSize: '0.5rem' }}>◆</span>
+            <span>Groq</span>
+            <span style={{ color: 'var(--border)', fontSize: '0.5rem' }}>◆</span>
+            <span>Neo4j</span>
+            <span style={{ color: 'var(--border)', fontSize: '0.5rem' }}>◆</span>
+            <span>MCP</span>
           </div>
         </div>
       </footer>

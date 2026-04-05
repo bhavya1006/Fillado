@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown'
 
 /**
  * SpeechBubble
- * Streaming text bubble positioned next to the active speaker.
+ * Streaming text bubble with left gold accent bar.
  * Tokens appear in real-time via WebSocket, cursor blinks while streaming.
  */
 export default function SpeechBubble({ persona, text, isStreaming, hallucinated }) {
@@ -15,81 +15,98 @@ export default function SpeechBubble({ persona, text, isStreaming, hallucinated 
       {text && (
         <motion.div
           key={persona + '-bubble'}
-          initial={{ opacity: 0, y: 10, scale: 0.96 }}
+          initial={{ opacity: 0, y: 10, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -10, scale: 0.96 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+          exit={{ opacity: 0, y: -10, scale: 0.97 }}
+          transition={{ type: 'spring', stiffness: 240, damping: 24 }}
           className={hallucinated ? 'hallucination-flash' : ''}
           style={{
-            background: cfg.bg,
-            border: `1px solid ${hallucinated ? 'rgba(244,63,94,0.6)' : cfg.border}`,
-            borderRadius: 14,
-            padding: '14px 18px',
+            background: 'rgba(0,0,0,0.2)',
+            border: `1px solid ${hallucinated ? 'rgba(229,56,79,0.5)' : cfg.border}`,
+            borderRadius: 2,
+            padding: 0,
             maxWidth: '100%',
             position: 'relative',
+            display: 'flex',
+            overflow: 'hidden',
           }}
         >
-          {/* Speaker label */}
+          {/* Left accent bar */}
           <div style={{
-            display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8,
-          }}>
-            <span style={{ fontSize: '1rem' }}>{cfg.emoji}</span>
-            <span style={{ fontSize: '0.78rem', fontWeight: 700, color: cfg.color }}>
-              {cfg.name}
-            </span>
-            <span style={{
-              fontSize: '0.65rem', color: 'var(--text-muted)',
-              background: 'rgba(255,255,255,0.04)',
-              padding: '1px 6px', borderRadius: 4,
+            width: 3, flexShrink: 0,
+            background: `linear-gradient(to bottom, ${cfg.color}, ${cfg.color}44)`,
+          }} />
+
+          <div style={{ padding: '14px 18px', flex: 1, minWidth: 0 }}>
+            {/* Speaker label */}
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10,
             }}>
-              {cfg.role}
-            </span>
-            {isStreaming && (
-              <motion.span
-                animate={{ opacity: [1, 0.3, 1] }}
-                transition={{ duration: 1, repeat: Infinity }}
-                style={{
-                  marginLeft: 'auto', fontSize: '0.65rem',
-                  color: cfg.color, fontWeight: 600,
-                }}
-              >
-                ● LIVE
-              </motion.span>
-            )}
-          </div>
+              <span style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '0.88rem', fontWeight: 400, fontStyle: 'italic',
+                color: cfg.color,
+              }}>
+                {cfg.name}
+              </span>
+              <span style={{
+                fontSize: '0.58rem', color: 'var(--text-muted)',
+                background: 'rgba(255,255,255,0.03)',
+                padding: '2px 7px', borderRadius: 2,
+                fontFamily: 'var(--font-mono)', letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+              }}>
+                {cfg.role}
+              </span>
+              {isStreaming && (
+                <motion.span
+                  animate={{ opacity: [1, 0.3, 1] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                  style={{
+                    marginLeft: 'auto', fontSize: '0.58rem',
+                    color: cfg.color, fontWeight: 700,
+                    fontFamily: 'var(--font-mono)', letterSpacing: '0.06em',
+                  }}
+                >
+                  ● LIVE
+                </motion.span>
+              )}
+            </div>
 
-          {/* Message text rendered as Markdown */}
-          <div
-            className={isStreaming ? 'cursor-blink markdown-wrapper' : 'markdown-wrapper'}
-            style={{
-              fontSize: '0.88rem',
-              lineHeight: 1.65,
-              color: 'var(--text-primary)',
-              fontFamily: 'Inter, sans-serif',
-              wordBreak: 'break-word',
-            }}
-          >
-            <ReactMarkdown>{text}</ReactMarkdown>
-          </div>
-
-          {hallucinated && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
+            {/* Message text rendered as Markdown */}
+            <div
+              className={isStreaming ? 'cursor-blink markdown-wrapper' : 'markdown-wrapper'}
               style={{
-                marginTop: 10,
-                padding: '6px 12px',
-                background: 'rgba(244,63,94,0.12)',
-                border: '1px solid rgba(244,63,94,0.4)',
-                borderRadius: 8,
-                fontSize: '0.72rem',
-                color: '#f43f5e',
-                display: 'flex', alignItems: 'center', gap: 6,
+                fontSize: '0.85rem',
+                lineHeight: 1.7,
+                color: 'var(--text-primary)',
+                fontFamily: 'var(--font-body)',
+                wordBreak: 'break-word',
               }}
             >
-              ⚠ Context corrected by Thought Policeman — MCP tool invoked
-            </motion.div>
-          )}
+              <ReactMarkdown>{text}</ReactMarkdown>
+            </div>
+
+            {hallucinated && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                style={{
+                  marginTop: 12,
+                  padding: '6px 12px',
+                  background: 'rgba(229,56,79,0.08)',
+                  border: '1px solid rgba(229,56,79,0.3)',
+                  borderRadius: 2,
+                  fontSize: '0.68rem',
+                  color: 'var(--accent-crimson)',
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  fontFamily: 'var(--font-mono)', letterSpacing: '0.04em',
+                }}
+              >
+                ▲ Context corrected by Thought Policeman — MCP tool invoked
+              </motion.div>
+            )}
+          </div>
         </motion.div>
       )}
     </AnimatePresence>

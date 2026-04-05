@@ -41,18 +41,24 @@ export default function GraphViz({ causalChain = [], graphContext = {} }) {
     y: H / 2 + (i % 2 === 0 ? -30 : 30),
   }))
 
-  const NODE_COLORS = ['#6366f1','#22d3ee','#f59e0b','#10b981','#f43f5e','#818cf8','#34d399']
+  const NODE_COLORS = ['#d4af37', '#58c4dc', '#c9973b', '#3dd68c', '#d65c6f', '#a89cdb', '#7b93b0']
 
   return (
     <div style={{ marginTop: 24 }}>
-      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: 12, fontWeight: 600, letterSpacing: '0.06em' }}>
-        🔗 CAUSAL CHAIN — SUPPLY CHAIN IMPACT MAP
+      <div style={{
+        fontSize: '0.58rem', color: 'var(--text-muted)', marginBottom: 14,
+        fontWeight: 700, letterSpacing: '0.12em',
+        fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
+        display: 'flex', alignItems: 'center', gap: 6,
+      }}>
+        <span style={{ width: 12, height: 1, background: 'var(--accent-gold)', display: 'inline-block', opacity: 0.5 }} />
+        Causal Chain — Supply Chain Impact Map
       </div>
 
-      <div style={{
-        background: 'rgba(13,17,23,0.8)',
+      <div className="corner-marks" style={{
+        background: 'rgba(0,0,0,0.2)',
         border: '1px solid var(--border)',
-        borderRadius: 14, padding: 16,
+        borderRadius: 2, padding: 18,
         overflowX: 'auto',
       }}>
         <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ minWidth: 400 }}>
@@ -68,17 +74,17 @@ export default function GraphViz({ causalChain = [], graphContext = {} }) {
                 <defs>
                   <marker id={`arr-${i}`} viewBox="0 0 10 10" refX="10" refY="5"
                     markerWidth="6" markerHeight="6" orient="auto">
-                    <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(99,102,241,0.6)" />
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(212,175,55,0.45)" />
                   </marker>
                 </defs>
                 <path
                   d={`M ${s.x} ${s.y} Q ${mx} ${my} ${t.x} ${t.y}`}
-                  stroke="rgba(99,102,241,0.45)" strokeWidth="1.5"
+                  stroke="rgba(212,175,55,0.25)" strokeWidth="1.5"
                   fill="none" strokeDasharray="4 3"
                   markerEnd={`url(#arr-${i})`}
                 />
                 <text x={mx} y={my - 4} textAnchor="middle"
-                  fill="rgba(148,163,184,0.8)" fontSize="9" fontFamily="JetBrains Mono, monospace">
+                  fill="rgba(154,147,135,0.8)" fontSize="9" fontFamily="'IBM Plex Mono', monospace">
                   {relationship}
                 </text>
               </motion.g>
@@ -96,11 +102,20 @@ export default function GraphViz({ causalChain = [], graphContext = {} }) {
                 transition={{ delay: 0.1 + i * 0.08, type: 'spring', stiffness: 200, damping: 15 }}
                 style={{ transformOrigin: `${pos.x}px ${pos.y}px` }}
               >
-                <circle cx={pos.x} cy={pos.y} r={nodeRadius}
-                  fill={`${color}18`} stroke={color} strokeWidth="1.5" />
+                {/* Hexagonal node via polygon instead of circle */}
+                <polygon
+                  points={(() => {
+                    const r = nodeRadius
+                    return [0, 1, 2, 3, 4, 5].map(k => {
+                      const angle = (Math.PI / 3) * k - Math.PI / 6
+                      return `${pos.x + r * Math.cos(angle)},${pos.y + r * Math.sin(angle)}`
+                    }).join(' ')
+                  })()}
+                  fill={`${color}12`} stroke={color} strokeWidth="1"
+                />
                 <text x={pos.x} y={pos.y + 4} textAnchor="middle"
-                  fill={color} fontSize="9.5" fontWeight="700"
-                  fontFamily="Inter, sans-serif">
+                  fill={color} fontSize="9" fontWeight="700"
+                  fontFamily="'DM Sans', sans-serif">
                   {name.length > 10 ? name.slice(0, 9) + '…' : name}
                 </text>
               </motion.g>
@@ -109,21 +124,21 @@ export default function GraphViz({ causalChain = [], graphContext = {} }) {
         </svg>
 
         {/* Legend */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 12 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 14 }}>
           {links.map(({ source, relationship, target }, i) => (
             <motion.div key={i}
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 + i * 0.05 }}
               style={{
-                fontSize: '0.68rem', color: 'var(--text-secondary)',
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.06)',
-                borderRadius: 6, padding: '3px 8px',
-                fontFamily: 'JetBrains Mono, monospace',
+                fontSize: '0.64rem', color: 'var(--text-secondary)',
+                background: 'rgba(255,255,255,0.02)',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: 2, padding: '3px 8px',
+                fontFamily: 'var(--font-mono)',
               }}
             >
-              {source} → <span style={{ color: '#818cf8' }}>{relationship}</span> → {target}
+              {source} → <span style={{ color: 'var(--accent-gold)' }}>{relationship}</span> → {target}
             </motion.div>
           ))}
         </div>
