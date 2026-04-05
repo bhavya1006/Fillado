@@ -24,6 +24,7 @@ import httpx
 from groq import Groq
 
 from backend.core.config import get_settings
+from backend.core.key_manager import get_newsdata_key, report_newsdata_error
 
 logger = logging.getLogger(__name__)
 
@@ -114,45 +115,50 @@ async def fetch_et_news(query: str, timeframe: str = "7d") -> dict:
 
     # ─── TIER 1: NewsData.io API ─────────────────────────────────────────────
     try:
-        if not settings.newsdata_api_key:
+        nd_key = get_newsdata_key()
+        if not nd_key or nd_key == "__no_newsdata_key__":
+            # Also accept the legacy single-key path as a fallback
+            nd_key = settings.newsdata_api_key
+        if not nd_key:
             raise ValueError("NEWSDATA_API_KEY not configured — skipping to Tier 2")
 
         logger.info(f"[fetch_et_news] TIER 1: NewsData.io for '{query}'")
         print(f"\n[MCP TIER-1] 📰 NewsData.io → ET search for: '{query}'")
 
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.get(
-                "https://newsdata.io/api/1/latest",
-                params={
-                    "apikey": settings.newsdata_api_key,
-                    "q":         query,
-                    "country":   "in",
-                    "language":  "en",
-                    "domainurl": "economictimes.indiatimes.com",
-                },
-            )
-            response.raise_for_status()
-            data = response.json()
+        async def _newsdata_get(params: dict) -> dict:
+            """Makes a NewsData.io GET call; retries once with a fresh key on 401/429."""
+            nonlocal nd_key
+            for _attempt in range(2):
+                async with httpx.AsyncClient(timeout=10.0) as http:
+                    resp = await http.get("https://newsdata.io/api/1/latest", params={**params, "apikey": nd_key})
+                    if resp.status_code in (401, 429):
+                        report_newsdata_error(nd_key)
+                        nd_key = get_newsdata_key()  # rotate to next key
+                        print(f"[MCP TIER-1] ⚠️ HTTP {resp.status_code} — rotating NewsData key, retry {_attempt+1}")
+                        continue
+                    resp.raise_for_status()
+                    return resp.json()
+            raise ValueError(f"NewsData.io: all key attempts exhausted (last status {resp.status_code})")
 
+        data = await _newsdata_get({
+            "q":         query,
+            "country":   "in",
+            "language":  "en",
+            "domainurl": "economictimes.indiatimes.com",
+        })
         results = data.get("results", [])
 
         # RETRY: if ET-specific search returned nothing, retry with broader Indian financial news
         if not results:
             logger.info(f"[fetch_et_news] TIER 1: No ET results, retrying without domain filter")
             print(f"[MCP TIER-1] ♻ 0 ET results — retrying with broader Indian finance news")
-            async with httpx.AsyncClient(timeout=10.0) as client:
-                resp2 = await client.get(
-                    "https://newsdata.io/api/1/latest",
-                    params={
-                        "apikey":    settings.newsdata_api_key,
-                        "q":         query,
-                        "country":   "in",
-                        "language":  "en",
-                        "category":  "business",  # broad Indian business news
-                    },
-                )
-                resp2.raise_for_status()
-                results = resp2.json().get("results", [])
+            data2 = await _newsdata_get({
+                "q":         query,
+                "country":   "in",
+                "language":  "en",
+                "category":  "business",
+            })
+            results = data2.get("results", [])
 
         if not results:
             raise ValueError(f"NewsData.io: 0 results for '{query}' (both domain+broad searches)")
@@ -342,19 +348,23 @@ async def get_nse_price(ticker: str) -> dict:
     try:
         import yfinance as yf
 
-        sym = ticker.upper()
-        sym = ticker.upper()
+        # Normalize: strip whitespace, uppercase, avoid double-suffix bugs (e.g. HPCL.NS.NS)
+        raw_input = ticker
+        sym = ticker.strip().upper()
         # Add this mapping for major indices:
         if sym == "NIFTY50":
             yf_sym = "^NSEI"
         elif sym == "SENSEX":
             yf_sym = "^BSESN"
+        elif sym.endswith(".NS") or sym.endswith(".BO"):
+            yf_sym = sym  # already has a valid exchange suffix — use as-is
         else:
-            yf_sym = sym if sym.endswith(".NS") or sym.endswith(".BO") else f"{sym}.NS"
+            yf_sym = f"{sym}.NS"
 
-
+        print(f"[get_nse_price] Resolved ticker: {raw_input} → {yf_sym}")
         logger.info(f"[get_nse_price] Fetching live data for {yf_sym}")
         print(f"\n[MCP LIVE] 📈 yfinance fetching OHLCV for {yf_sym}")
+
 
         def _fetch():
             t = yf.Ticker(yf_sym)
@@ -471,6 +481,8 @@ async def execute_graphrag_query(unstructured_query: str) -> dict:
     transformer = GraphRAGTransformer()
     result = await transformer.transform(unstructured_query)
     transformer.close()
+    print("unstructured query",unstructured_query)
+    print("result",result)
     return {
         "tool": "execute_graphrag_query",
         "query": unstructured_query,
