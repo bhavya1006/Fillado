@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 .env
+
+# Generated AI Anchor voice files — do not commit MP3s
+backend/voice/audio/
+
 # Distribution / packaging
 .Python
 build/

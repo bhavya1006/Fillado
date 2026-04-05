@@ -29,6 +29,13 @@ class Settings(BaseSettings):
     # ngrok public HTTPS tunnel URL (required for ArmorIQ MCP registration)
     ngrok_public_url: str = ""
 
+    # Gemini (for AI Anchor script generation)
+    gemini_api_key: str = ""
+
+    # ElevenLabs (for TTS voice generation)
+    elevenlabs_api_key: str = ""
+    elevenlabs_voice_id: str = "21m00Tcm4TlvDq8ikWAM"  # Rachel — neutral anchor voice
+
     # App
     debug: bool = True
     cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"

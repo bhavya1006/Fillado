@@ -11,3 +11,6 @@ python-dotenv
 httpx
 yfinance
 armoriq-sdk
+google-generativeai
+elevenlabs
+

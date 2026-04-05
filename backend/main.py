@@ -18,9 +18,11 @@ import asyncio
 import json
 import logging
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from backend.core.config import get_settings
@@ -70,6 +72,11 @@ app.add_middleware(
 app.include_router(mcp_router)
 app.include_router(mcp_http_router)  # ArmorIQ-facing MCP HTTP endpoint
 
+# Serve generated voice MP3s as static files
+_audio_dir = Path("backend/voice/audio")
+_audio_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/audio", StaticFiles(directory=str(_audio_dir)), name="audio")
+
 
 # ---------------------------------------------------------------------------
 # Request / Response schemas
@@ -87,6 +94,12 @@ class TriggerEventResponse(BaseModel):
     message: str
 
 
+class GenerateVoiceRequest(BaseModel):
+    debate_id: str
+    event: str
+    rationale: str
+
+
 # ---------------------------------------------------------------------------
 # REST Endpoints
 # ---------------------------------------------------------------------------
@@ -94,6 +107,40 @@ class TriggerEventResponse(BaseModel):
 @app.get("/health")
 async def health():
     return {"status": "ok", "service": "fillado-backend"}
+
+
+@app.post("/api/generate-voice", tags=["Voice"])
+async def generate_voice_endpoint(req: GenerateVoiceRequest):
+    """
+    Generate an AI Anchor voice clip for a debate.
+    Step 1: Gemini rephrases the rationale as a news-anchor script.
+    Step 2: ElevenLabs converts it to MP3 saved in backend/voice/audio/.
+    Returns the URL to stream the audio plus the anchor script text.
+    """
+    from backend.voice.narrator import generate_debate_audio
+
+    cfg = get_settings()
+
+    if not cfg.elevenlabs_api_key:
+        return {"audio_url": None, "script": None, "error": "ELEVENLABS_API_KEY not configured"}
+
+    audio_path, script = await generate_debate_audio(
+        debate_id=req.debate_id,
+        event=req.event,
+        rationale=req.rationale,
+        gemini_api_key=cfg.gemini_api_key,
+        elevenlabs_api_key=cfg.elevenlabs_api_key,
+        voice_id=cfg.elevenlabs_voice_id,
+    )
+
+    if audio_path is None:
+        return {"audio_url": None, "script": script, "error": "Voice generation failed — check server logs"}
+
+    # Convert local path → publicly accessible URL
+    filename = Path(audio_path).name
+    audio_url = f"/audio/{filename}"
+
+    return {"audio_url": audio_url, "script": script, "error": None}
 
 
 @app.post("/api/trigger-event", response_model=TriggerEventResponse, tags=["Market Events"])
